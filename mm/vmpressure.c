@@ -104,12 +104,12 @@ static struct vmpressure *work_to_vmpressure(struct work_struct *work)
 	return container_of(work, struct vmpressure, work);
 }
 
-#ifdef CONFIG_MEMCG
 static struct vmpressure *cg_to_vmpressure(struct cgroup *cg)
 {
 	return css_to_vmpressure(cgroup_subsys_state(cg, mem_cgroup_subsys_id));
 }
 
+#ifdef CONFIG_MEMCG
 static struct vmpressure *vmpressure_parent(struct vmpressure *vmpr)
 {
 	struct cgroup *cg = vmpressure_to_css(vmpr)->cgroup;
@@ -121,11 +121,6 @@ static struct vmpressure *vmpressure_parent(struct vmpressure *vmpr)
 	return memcg_to_vmpressure(memcg);
 }
 #else
-static struct vmpressure *cg_to_vmpressure(struct cgroup *cg)
-{
-	return NULL;
-}
-
 static struct vmpressure *vmpressure_parent(struct vmpressure *vmpr)
 {
 	return NULL;
@@ -158,8 +153,15 @@ static unsigned long vmpressure_calc_pressure(unsigned long scanned,
 						    unsigned long reclaimed)
 {
 	unsigned long scale = scanned + reclaimed;
-	unsigned long pressure;
+	unsigned long pressure = 0;
 
+	/*
+	 * reclaimed can be greater than scanned in cases
+	 * like THP, where the scanned is 1 and reclaimed
+	 * could be 512
+	 */
+	if (reclaimed >= scanned)
+		goto out;
 	/*
 	 * We calculate the ratio (in percents) of how many pages were
 	 * scanned vs. reclaimed in a given time frame (window). Note that
@@ -170,23 +172,11 @@ static unsigned long vmpressure_calc_pressure(unsigned long scanned,
 	pressure = scale - (reclaimed * scale / scanned);
 	pressure = pressure * 100 / scale;
 
+out:
 	pr_debug("%s: %3lu  (s: %lu  r: %lu)\n", __func__, pressure,
 		 scanned, reclaimed);
 
 	return pressure;
-}
-
-static unsigned long vmpressure_account_stall(unsigned long pressure,
-				unsigned long stall, unsigned long scanned)
-{
-	unsigned long scale;
-
-	if (pressure < allocstall_threshold)
-		return pressure;
-
-	scale = ((vmpressure_scale_max - pressure) * stall) / scanned;
-
-	return pressure + scale;
 }
 
 struct vmpressure_event {
@@ -302,7 +292,6 @@ void vmpressure_global(gfp_t gfp, unsigned long scanned,
 {
 	struct vmpressure *vmpr = &global_vmpressure;
 	unsigned long pressure;
-	unsigned long stall;
 
 	if (!(gfp & (__GFP_HIGHMEM | __GFP_MOVABLE | __GFP_IO | __GFP_FS)))
 		return;
@@ -313,13 +302,9 @@ void vmpressure_global(gfp_t gfp, unsigned long scanned,
 	mutex_lock(&vmpr->sr_lock);
 	vmpr->scanned += scanned;
 	vmpr->reclaimed += reclaimed;
-
-	if (!current_is_kswapd())
-		vmpr->stall += scanned;
-
-	stall = vmpr->stall;
 	scanned = vmpr->scanned;
 	reclaimed = vmpr->reclaimed;
+	spin_unlock(&vmpr->sr_lock);
 	mutex_unlock(&vmpr->sr_lock);
 
 	if (scanned < vmpressure_win)
@@ -332,7 +317,6 @@ void vmpressure_global(gfp_t gfp, unsigned long scanned,
 	mutex_unlock(&vmpr->sr_lock);
 
 	pressure = vmpressure_calc_pressure(scanned, reclaimed);
-	pressure = vmpressure_account_stall(pressure, stall, scanned);
 	vmpressure_notify(pressure);
 }
 
@@ -457,8 +441,7 @@ void vmpressure_unregister_event(struct cgroup *cg, struct cftype *cft,
 	struct vmpressure *vmpr = cg_to_vmpressure(cg);
 	struct vmpressure_event *ev;
 
-	if (!vmpr)
-		BUG();
+	BUG_ON(!vmpr);
 
 	mutex_lock(&vmpr->events_lock);
 	list_for_each_entry(ev, &vmpr->events, node) {

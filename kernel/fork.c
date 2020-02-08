@@ -642,6 +642,7 @@ int mmput(struct mm_struct *mm)
 		ksm_exit(mm);
 		khugepaged_exit(mm); /* must run before exit_mmap */
 		exit_mmap(mm);
+		simple_lmk_mm_freed(mm);
 		set_mm_exe_file(mm, NULL);
 		if (!list_empty(&mm->mmlist)) {
 			spin_lock(&mmlist_lock);
@@ -650,7 +651,6 @@ int mmput(struct mm_struct *mm)
 		}
 		if (mm->binfmt)
 			module_put(mm->binfmt->module);
-		simple_lmk_mm_freed(mm);
 		mmdrop(mm);
 		mm_freed = 1;
 	}

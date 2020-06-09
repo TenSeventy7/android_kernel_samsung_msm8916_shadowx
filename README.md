@@ -55,3 +55,29 @@
      - Implemented Kcal color control
      - Enable adaptive LMK
      - Disable CRC by default
+
+  - __Eternatus__
+     - Disable zRAM
+     - Enable SSWAP
+     - Merge J510FNXXU2BRB1 ramdisk
+     - Merge Aether post-boot scripts
+     - Adjust LMK values for fortuna
+     - Disable adaptive LMK by default
+     - Enable hidden TCPs
+        - Advanced
+        - Cubic
+        - Westwood
+        - Vegas
+        - Illinois
+        - And more!
+     - Implement IO schedulers
+        - Improved BFQ
+        - FIOPS
+        - SIO
+        - SIO+
+        - ZEN
+        - Tripndroid
+        - And more!
+     - Properly enabled ARCH POWER & gentle fair sleepers
+     - Removed prima WLAN drivers
+     - Built-in WiFi drivers

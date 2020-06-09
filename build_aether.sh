@@ -24,7 +24,7 @@
 #
 clear
 # Init Fields
-AE_VERSION=DracoMeteor
+AE_VERSION=Eternatus
 AE_DATE=$(date +%Y%m%d)
 AE_TOOLCHAIN=/home/caelestisz/AndroidBuilds/Toolchains/linaro-4.8/bin/arm-eabi-
 AE_DIR=$(pwd)

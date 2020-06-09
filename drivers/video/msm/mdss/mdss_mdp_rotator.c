@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2014, 2016, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -110,7 +110,6 @@ static struct mdss_mdp_pipe *mdss_mdp_rotator_pipe_alloc(void)
 		return NULL;
 	}
 
-	MDSS_XLOG(pipe->num, mixer->num);
 	pipe->mixer_stage = MDSS_MDP_STAGE_UNUSED;
 
 	return pipe;
@@ -288,15 +287,7 @@ static int mdss_mdp_rotator_queue_sub(struct mdss_mdp_rotator_session *rot,
 	ATRACE_BEGIN("rotator_kickoff");
 	ret = mdss_mdp_rotator_kickoff(rot_ctl, rot, dst_data);
 	ATRACE_END("rotator_kickoff");
-	if (ret) {
-		pr_err("mdss_mdp_rotator_kickoff error : %d\n", ret);
-		goto error;
-	}
 
-	if (ret) {
-		pr_err("unable to kickoff rot data\n");
-		goto error;
-	}
 	return ret;
 error:
 	if (orig_ctl->shared_lock)
@@ -320,7 +311,6 @@ static void mdss_mdp_rotator_commit_wq_handler(struct work_struct *work)
 	if (rot->rot_sync_pt_data) {
 		atomic_inc(&rot->rot_sync_pt_data->commit_cnt);
 		mdss_fb_signal_timeline(rot->rot_sync_pt_data);
-		rot->fence_release = true;
 	} else {
 		pr_err("rot_sync_pt_data is NULL\n");
 	}
@@ -367,7 +357,7 @@ static int mdss_mdp_rotator_busy_wait_ex(struct mdss_mdp_rotator_session *rot)
 
 	if (rot->use_sync_pt)
 		mdss_fb_wait_for_fence(rot->rot_sync_pt_data);
-	rot->fence_release = false;
+
 	return 0;
 }
 
@@ -644,16 +634,6 @@ int mdss_mdp_rotator_setup(struct msm_fb_data_type *mfd,
 	return ret;
 }
 
-static void mdss_mdp_rotator_fence_free(
-	struct mdss_mdp_rotator_session *rot)
-{
-	if (rot->rot_sync_pt_data && !rot->fence_release) {
-		atomic_inc(&rot->rot_sync_pt_data->commit_cnt);
-		mdss_fb_signal_timeline(rot->rot_sync_pt_data);
-		rot->fence_release = true;
-	}
-}
-
 static int mdss_mdp_rotator_finish(struct mdss_mdp_rotator_session *rot)
 {
 	struct mdss_mdp_pipe *rot_pipe;
@@ -684,8 +664,6 @@ static int mdss_mdp_rotator_finish(struct mdss_mdp_rotator_session *rot)
 
 	if (!list_empty(&rot->list))
 		list_del(&rot->list);
-
-	mdss_mdp_rotator_fence_free(rot);
 
 	rot_sync_pt_data = rot->rot_sync_pt_data;
 	commit_work = rot->commit_work;

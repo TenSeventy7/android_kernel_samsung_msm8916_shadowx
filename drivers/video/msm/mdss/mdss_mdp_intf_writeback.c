@@ -124,12 +124,8 @@ static int mdss_mdp_writeback_addr_setup(struct mdss_mdp_writeback_ctx *ctx,
 		data.bwc_enabled = 1;
 
 	ret = mdss_mdp_data_check(&data, &ctx->dst_planes);
-	if (ret) {
-		pr_err("wh=%dx%d\n",
-		ctx->width, ctx->height);
-		pr_err("Format: ctx->dst_fmt->format = %d\n", ctx->dst_fmt->format);
+	if (ret)
 		return ret;
-	}
 
 	mdss_mdp_data_calc_offset(&data, ctx->dst_rect.x, ctx->dst_rect.y,
 			&ctx->dst_planes, ctx->dst_fmt);
@@ -171,8 +167,8 @@ static int mdss_mdp_writeback_format_setup(struct mdss_mdp_writeback_ctx *ctx,
 	chroma_samp = fmt->chroma_sample;
 
 	if (ctx->type != MDSS_MDP_WRITEBACK_TYPE_ROTATOR && fmt->is_yuv) {
-		mdss_mdp_csc_setup(MDSS_MDP_BLOCK_WB, ctx->wb_num,
-				   MDSS_MDP_CSC_RGB2YUV_601L);
+		mdss_mdp_csc_setup(MDSS_MDP_BLOCK_WB, ctx->wb_num, 0,
+				   MDSS_MDP_CSC_RGB2YUV);
 		opmode |= (1 << 8) |	/* CSC_EN */
 			  (0 << 9) |	/* SRC_DATA=RGB */
 			  (1 << 10);	/* DST_DATA=YCBCR */
@@ -236,7 +232,7 @@ static int mdss_mdp_writeback_format_setup(struct mdss_mdp_writeback_ctx *ctx,
 	outsize = (ctx->dst_rect.h << 16) | ctx->dst_rect.w;
 
 	if (ctx->type == MDSS_MDP_WRITEBACK_TYPE_ROTATOR &&
-			mdata && mdata->has_rot_dwnscale) {
+			mdata->has_rot_dwnscale) {
 		dnsc_factor = (ctx->dnsc_factor_h) | (ctx->dnsc_factor_w << 16);
 		mdp_wb_write(ctx, MDSS_MDP_REG_WB_ROTATOR_PIPE_DOWNSCALER,
 								dnsc_factor);
@@ -723,7 +719,6 @@ int mdss_mdp_writeback_start(struct mdss_mdp_ctl *ctl)
 	ctl->wait_fnc = mdss_mdp_wb_wait4comp;
 	ctl->add_vsync_handler = mdss_mdp_wb_add_vsync_handler;
 	ctl->remove_vsync_handler = mdss_mdp_wb_remove_vsync_handler;
-	ctl->wait_video_pingpong = NULL;
 
 	ctx->is_vbif_nrt = IS_MDSS_MAJOR_MINOR_SAME(ctl->mdata->mdp_rev,
 							MDSS_MDP_HW_REV_107);

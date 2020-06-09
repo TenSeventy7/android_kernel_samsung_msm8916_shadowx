@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -16,7 +16,6 @@
 
 #include <linux/list.h>
 #include <linux/mdss_io_util.h>
-#include <mach/scm-io.h>
 #include <linux/irqreturn.h>
 #include <linux/pinctrl/consumer.h>
 #include <linux/gpio.h>
@@ -94,7 +93,6 @@ enum dsi_panel_bl_ctrl {
 #if defined(CONFIG_FB_MSM_MDSS_SAMSUNG)
 	BL_SS_PWM,
 #endif
-
 	UNKNOWN_CTRL,
 };
 
@@ -159,9 +157,8 @@ enum dsi_pm_type {
 #define DSI_CMD_DST_FORMAT_RGB666	7
 #define DSI_CMD_DST_FORMAT_RGB888	8
 
-#define DSI_INTR_DESJEW_MASK		BIT(31)
-#define DSI_INTR_DYNAMIC_REFRESH_MASK	BIT(29)
-#define DSI_INTR_DYNAMIC_REFRESH_DONE	BIT(28)
+#define DSI_INTR_DYNAMIC_REFRESH_MASK		BIT(29)
+#define DSI_INTR_DYNAMIC_REFRESH_DONE		BIT(28)
 #define DSI_INTR_ERROR_MASK		BIT(25)
 #define DSI_INTR_ERROR			BIT(24)
 #define DSI_INTR_BTA_DONE_MASK          BIT(21)
@@ -175,15 +172,6 @@ enum dsi_pm_type {
 /* Update this if more interrupt masks are added in future chipsets */
 #define DSI_INTR_TOTAL_MASK		0x2222AA02
 
-#define DSI_INTR_MASK_ALL	\
-		(DSI_INTR_DESJEW_MASK | \
-		DSI_INTR_DYNAMIC_REFRESH_MASK | \
-		DSI_INTR_ERROR_MASK | \
-		DSI_INTR_BTA_DONE_MASK | \
-		DSI_INTR_VIDEO_DONE_MASK | \
-		DSI_INTR_CMD_MDP_DONE_MASK | \
-		DSI_INTR_CMD_DMA_DONE_MASK)
-
 #define DSI_CMD_TRIGGER_NONE		0x0	/* mdp trigger */
 #define DSI_CMD_TRIGGER_TE		0x02
 #define DSI_CMD_TRIGGER_SW		0x04
@@ -196,15 +184,14 @@ enum dsi_pm_type {
 #define DSI_BTA_TERM    BIT(1)
 #define DSI_CMD_TERM    BIT(0)
 
-#define DSI_DATA_LANES_STOP_STATE	0xF
-#define DSI_CLK_LANE_STOP_STATE		BIT(4)
-#define DSI_DATA_LANES_ENABLED		0xF0
-
 /* offsets for dynamic refresh */
 #define DSI_DYNAMIC_REFRESH_CTRL		0x200
 #define DSI_DYNAMIC_REFRESH_PIPE_DELAY		0x204
 #define DSI_DYNAMIC_REFRESH_PIPE_DELAY2		0x208
 #define DSI_DYNAMIC_REFRESH_PLL_DELAY		0x20C
+
+#define DSI_DATA_LANES_STOP_STATE	0xF
+#define DSI_CLK_LANE_STOP_STATE		BIT(4)
 
 extern struct device dsi_dev;
 extern u32 dsi_irq;
@@ -251,6 +238,7 @@ struct dsi_clk_desc {
 	u32 pre_div_func;
 };
 
+
 struct dsi_panel_cmds {
 	char *buf;
 	int blen;
@@ -273,7 +261,6 @@ struct dsi_drv_cm_data {
 	struct regulator *vdd_vreg;
 	struct regulator *vdd_io_vreg;
 	struct regulator *vdda_vreg;
-	int broadcast_enable;
 };
 
 struct dsi_pinctrl_res {
@@ -311,8 +298,6 @@ enum {
 #define DSI_EV_MDP_FIFO_UNDERFLOW	0x0002
 #define DSI_EV_DSI_FIFO_EMPTY		0x0004
 #define DSI_EV_DLNx_FIFO_OVERFLOW	0x0008
-#define DSI_EV_LP_RX_TIMEOUT		0x0010
-#define DSI_EV_STOP_HS_CLK_LANE		0x40000000
 #define DSI_EV_MDP_BUSY_RELEASE		0x80000000
 
 struct mdss_dsi_panel_cmd_list {
@@ -345,7 +330,6 @@ struct mdss_dsi_panel_cmd_list {
 struct mdss_dsi_ctrl_pdata {
 	int ndx;	/* panel_num */
 	int (*on) (struct mdss_panel_data *pdata);
-	int (*post_panel_on)(struct mdss_panel_data *pdata);
 	int (*off) (struct mdss_panel_data *pdata);
 	int (*low_power_config) (struct mdss_panel_data *pdata, int enable);
 	int (*set_col_page_addr) (struct mdss_panel_data *pdata);
@@ -357,11 +341,9 @@ struct mdss_dsi_ctrl_pdata {
 	int (*panel_reset) (struct mdss_panel_data *pdata, int enable);
 #ifdef CONFIG_FB_MSM_MDSS_SAMSUNG
 	int (*event_handler) (struct mdss_panel_data *pdata, int e, void *arg);
-	int lcd_select_gpio;
 #endif
 	struct mdss_panel_data panel_data;
 	unsigned char *ctrl_base;
-	u32 hw_rev;
 	struct dss_io_data ctrl_io;
 	struct dss_io_data mmss_misc_io;
 	struct dss_io_data phy_io;
@@ -383,15 +365,12 @@ struct mdss_dsi_ctrl_pdata {
 	struct clk *shadow_byte_clk;
 	struct clk *shadow_pixel_clk;
 	struct clk *vco_clk;
-#ifdef CONFIG_FB_MSM_MDSS_SAMSUNG
-	struct clk *lvds_clk;
-#endif
 	u8 ctrl_state;
 	int panel_mode;
 	int irq_cnt;
+	int disp_te_gpio;
 	int rst_gpio;
 	int disp_en_gpio;
-	int disp_te_gpio;
 	int bklt_en_gpio;
 	int mode_gpio;
 	int bklt_ctrl;	/* backlight ctrl */
@@ -402,13 +381,10 @@ struct mdss_dsi_ctrl_pdata {
 	int bklt_max;
 	int new_fps;
 	int pwm_enabled;
-	bool dmap_iommu_map;
-	int clk_lane_cnt;
 	bool panel_bias_vreg;
 	bool dsi_irq_line;
 	atomic_t te_irq_ready;
 
-	bool cmd_clk_ln_recovery_en;
 	bool cmd_sync_wait_broadcast;
 	bool cmd_sync_wait_trigger;
 
@@ -417,15 +393,12 @@ struct mdss_dsi_ctrl_pdata {
 	struct dsi_drv_cm_data shared_pdata;
 	u32 pclk_rate;
 	u32 byte_clk_rate;
-	bool refresh_clk_rate; /* flag to recalculate clk_rate */
 	struct dss_module_power power_data[DSI_MAX_PM];
 	u32 dsi_irq_mask;
 	struct mdss_hw *dsi_hw;
 	struct mdss_intf_recovery *recovery;
 
 	struct dsi_panel_cmds on_cmds;
-	struct dsi_panel_cmds post_dms_on_cmds;
-	struct dsi_panel_cmds post_panel_on_cmds;
 	struct dsi_panel_cmds off_cmds;
 	struct dsi_panel_cmds status_cmds;
 	u32 status_cmds_rlen;
@@ -447,7 +420,6 @@ struct mdss_dsi_ctrl_pdata {
 	int mdp_busy;
 	struct mutex mutex;
 	struct mutex cmd_mutex;
-	struct mutex clk_lane_mutex;
 
 	u32 ulps_clamp_ctrl_off;
 	u32 ulps_phyrst_ctrl_off;
@@ -460,7 +432,6 @@ struct mdss_dsi_ctrl_pdata {
 	struct dsi_buf rx_buf;
 	struct dsi_buf status_buf;
 	int status_mode;
-	int rx_len;
 
 	struct dsi_pinctrl_res pin_res;
 
@@ -472,8 +443,6 @@ struct mdss_dsi_ctrl_pdata {
 	int horizontal_idle_cnt;
 	struct panel_horizontal_idle *line_idle;
 	struct mdss_util_intf *mdss_util;
-
-	bool dfps_status;	/* dynamic refresh status */
 };
 
 struct dsi_status_data {
@@ -486,10 +455,10 @@ int dsi_panel_device_register(struct device_node *pan_node,
 				struct mdss_dsi_ctrl_pdata *ctrl_pdata);
 
 int mdss_dsi_cmds_tx(struct mdss_dsi_ctrl_pdata *ctrl,
-		struct dsi_cmd_desc *cmds, int cnt, int use_dma_tpg);
+		struct dsi_cmd_desc *cmds, int cnt);
 
 int mdss_dsi_cmds_rx(struct mdss_dsi_ctrl_pdata *ctrl,
-			struct dsi_cmd_desc *cmds, int rlen, int use_dma_tpg);
+			struct dsi_cmd_desc *cmds, int rlen);
 
 void mdss_dsi_host_init(struct mdss_panel_data *pdata);
 void mdss_dsi_op_mode_config(int mode,
@@ -534,7 +503,7 @@ void mdss_dsi_phy_sw_reset(struct mdss_dsi_ctrl_pdata *ctrl);
 void mdss_dsi_phy_init(struct mdss_dsi_ctrl_pdata *ctrl);
 void mdss_dsi_ctrl_init(struct device *ctrl_dev,
 			struct mdss_dsi_ctrl_pdata *ctrl);
-int mdss_dsi_cmd_mdp_busy(struct mdss_dsi_ctrl_pdata *ctrl);
+void mdss_dsi_cmd_mdp_busy(struct mdss_dsi_ctrl_pdata *ctrl);
 void mdss_dsi_wait4video_done(struct mdss_dsi_ctrl_pdata *ctrl);
 void mdss_dsi_en_wait4dynamic_done(struct mdss_dsi_ctrl_pdata *ctrl);
 int mdss_dsi_cmdlist_commit(struct mdss_dsi_ctrl_pdata *ctrl, int from_mdp);
@@ -545,9 +514,6 @@ bool __mdss_dsi_clk_enabled(struct mdss_dsi_ctrl_pdata *ctrl, u8 clk_type);
 void mdss_dsi_ctrl_setup(struct mdss_dsi_ctrl_pdata *ctrl);
 void mdss_dsi_dln0_phy_err(struct mdss_dsi_ctrl_pdata *ctrl);
 void mdss_dsi_lp_cd_rx(struct mdss_dsi_ctrl_pdata *ctrl);
-u32 mdss_dsi_panel_cmd_read(struct mdss_dsi_ctrl_pdata *ctrl, char cmd0,
-		char cmd1, void (*fxn)(int), char *rbuf, int len);
-void mdss_dsi_get_hw_revision(struct mdss_dsi_ctrl_pdata *ctrl);
 
 int mdss_dsi_panel_init(struct device_node *node,
 		struct mdss_dsi_ctrl_pdata *ctrl_pdata,
@@ -557,7 +523,6 @@ int mdss_panel_get_dst_fmt(u32 bpp, char mipi_mode, u32 pixel_packing,
 
 int mdss_dsi_register_recovery_handler(struct mdss_dsi_ctrl_pdata *ctrl,
 		struct mdss_intf_recovery *recovery);
-void mdss_dsi_unregister_bl_settings(struct mdss_dsi_ctrl_pdata *ctrl_pdata);
 
 static inline const char *__mdss_dsi_pm_name(enum dsi_pm_type module)
 {

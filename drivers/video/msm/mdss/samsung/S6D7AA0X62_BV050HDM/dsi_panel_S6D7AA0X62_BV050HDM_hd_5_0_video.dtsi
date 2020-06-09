@@ -32,9 +32,9 @@
 		qcom,mdss-pan-physical-height-dimension = <106>; /*<Height> real size of panel in mm */
 		qcom,mdss-dsi-lp11-init;
 		qcom,mdss-dsi-init-delay-us = <100>;
-		qcom,mdss-dsi-h-front-porch = <104>;//
-		qcom,mdss-dsi-h-back-porch = <154>;//
-		qcom,mdss-dsi-h-pulse-width = <42>;//
+		qcom,mdss-dsi-h-front-porch = <108>;//
+		qcom,mdss-dsi-h-back-porch = <120>;//
+		qcom,mdss-dsi-h-pulse-width = <26>;//
 		qcom,mdss-dsi-h-sync-skew = <0>;
 		qcom,mdss-dsi-v-back-porch = <12>;//
 		qcom,mdss-dsi-v-front-porch = <16>;//
@@ -65,7 +65,8 @@
 /*		qcom,mdss-dsi-hfp-power-mode;*/
 		qcom,mdss-dsi-hbp-power-mode;
 /*		qcom,mdss-dsi-hsa-power-mode;*/
-		qcom,mdss-dsi-panel-timings = [8B 1E 14 00 44 46 18 20 16 03 04 00];
+
+		qcom,mdss-dsi-panel-timings = [87 1C 12 00 42 44 18 20 17 03 04 00];
 		qcom,mdss-dsi-t-clk-pre = <0x1C>;
 		qcom,mdss-dsi-t-clk-post = <0x04>;
 		qcom,mdss-dsi-on-command = [
@@ -90,8 +91,7 @@
 					39 01 00 00 01 00 09 EE A5 00 98 00 A5 00 98 00
 					39 01 00 00 01 00 06 F2 02 10 10 44 10
 					39 01 00 00 01 00 0B F3 01 93 20 22 80 05 25 3C 26 00
-					39 01 00 00 01 00 2E F4 02 02 10 26 10 02 03 03 03 10 16 03 00 0C 0C 03 04 05 13 1E 09 0A 05 05 01 04 02 61 74 75 72 83 80 80 00 00 01 01 28 04 03 28 01 D1 32
-					39 01 00 00 01 00 1B F5 92 23 2D 5F BB 8B 55 0F 33 33 03 59 54 52 45 57 60 10 60 80 27 26 52 25 6F 1B
+					39 01 00 00 01 00 2E F4 02 02 10 26 10 02 03 03 03 10 16 03 00 0C 0C 03 04 05 13 1E 09 0A 05 05 01 04 02 61 74 75 72 83 80 80 00 00 01 01 28 04 03 28 01 D1 32 
 					39 01 00 00 00 00 21 F7 01 1B 08 0C 09 0D 01 01 01 04 06 01 01 00 00 1A 01 1B 0A 0E 0B 0F 01 01 01 05 07 01 01 00 00 1A
 					39 01 00 00 00 00 07 F6 60 25 05 00 00 00
 					39 01 00 00 00 00 06 FD 16 10 11 23 09
@@ -99,19 +99,13 @@
 					39 01 00 00 00 00 12 EF 34 12 98 BA 10 80 24 80 80 80 00 00 00 44 A0 82 00
 					39 01 00 00 00 00 0E CD 2E 2E 2E 2E 2E 2E 2E 2E 2E 2E 2E 2E 2E
 					39 01 00 00 00 00 0E CE 00 00 00 00 00 00 00 00 00 00 00 00 00
-					39 01 00 00 00 00 02 51 00	/* change default brightness to 0 */
+					39 01 00 00 00 00 02 51 02	/* change default brightness to min value */
 					39 01 00 00 00 00 02 53 24	/* CABC(MIE) off & manual dimming off */
 					39 01 00 00 00 00 02 55 00	/* CABC(MIE) off & manual dimming off */
 
 					/* Gamma Setting Sequence(3)*/
-			39 01 00 00 00 00 12 FA 08 3F 0A 0C 00 02 06 03 04 0C 11 16 19 1A 1E 25 2F/* Positive Gamma *//*	2.4	*/
-			39 01 00 00 00 00 12 FB 08 3F 0A 0C 00 01 05 03 03 0B 11 16 18 1A 1E 25 2E/* Negative Gamma */
-/*	39 01 00 00 00 00 12 FA 08 3F 0D 11 06 0A 0E 0D 0E 15 19 18 19 1A 1B 1F 28*//* Positive Gamma *//*	2.2	*/
-/*	39 01 00 00 00 00 12 FB 08 3F 0C 11 05 0A 0E 0C 0D 15 18 18 19 19 1A 1E 27*//* Negative Gamma */
-/*	39 01 00 00 00 00 12 FA 08 3F 0E 13 09 0E 13 12 13 1B 1F 24 25 27 2A 2B 32*//* Positive Gamma *//*	2.6	*/
-/*	39 01 00 00 00 00 12 FB 08 3F 0D 13 09 0E 13 12 13 1A 1F 24 25 26 29 1A 31*//* Negative Gamma */
-/*	39 01 00 00 00 00 12 FA 08 3F 0E 15 0B 10 16 15 16 1E 23 29 2A 2C 2E 30 36*//* Positive Gamma *//*	2.8	*/
-/*	39 01 00 00 00 00 12 FB 08 3F 0E 14 0B 10 15 14 16 1D 23 29 2A 2B 2E 30 35*//* Negative Gamma */
+					39 01 00 00 00 00 12 FA 08 3F 0D 12 07 0C 11 0F 11 18 1D 1E 21 23 24 27 30		/* Positive Gamma */
+					39 01 00 00 00 00 12 FB 08 3F 0C 12 07 0C 10 0F 11 18 1D 1E 21 23 23 26 2F		/* Negative Gamma */
 
 					/* Initializing Sequence(1-1) */
 					39 01 00 00 01 00 03 F0 A5 A5
@@ -120,10 +114,7 @@
 
 					/* Display on Sequence(4) */
 					05 01 00 00 78 00 02 11 00	/* Sleep Out & 120ms(0x78) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
+					05 01 00 00 14 00 02 29 00	/* Display On & 20ms(0x14) Delay */
 					];
 		qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
 		qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
@@ -131,16 +122,6 @@
 					05 01 00 00 32 00 02 28 00	/* wait 50ms(0x32) */
 					05 01 00 00 96 00 02 10 00	/* wait 150ms(0x96) */
 					];
-		samsung,mdss_check_panel_status_cmds_revA = [06 01 00 00 00 00 01 0A 01 00];	
-		samsung,mdss-check-panel-status-result = <0x9C>;		
-		samsung,mdss-sleep-out-command-enable;
-		samsung,mdss_sleep_out_cmds_revA = [
-					05 01 00 00 78 00 02 11 00	/* Sleep Out & 120ms(0x78) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-					05 01 00 00 05 00 02 29 00	/* Display On & 5ms(0x05) Delay */
-			];
 		samsung,mdss-dsi-bl-scale-low-level = <8>;
 		samsung,mdss-dsi-bl-scale-dim-level = <8>;
 		samsung,mdss-dsi-bl-scale-default-level = <89>;
@@ -201,20 +182,20 @@
 		*/
 	samsung,scaled_level_map_table_revA = <
 		/*<idx>	  <from>  <till> <scaled_level> */
-			0		0		0		0
-			1		1		7		2
-			2		8		11		4
-			3		12		14		6
-			4		15		17		8
-			5		18		19		10
-			6		20		22		12
-			7		23		24		14
-			8		25		27		16
-			9		28		29		18
-			10		30		32		19
-			11		33		34		20
-			12		35		37		21
-			13		38		39		22
+			0		0		7		2
+			1		8		9		4
+			2		10		12		6
+			3		13		14		8
+			4		15		17		9
+			5		18		19		11
+			6		20		22		13
+			7		23		24		15
+			8		25		27		17
+			9		28		29		19
+			10		30		32		20
+			11		33		34		21
+			12		35		37		22
+			13		38		39		23
 			14		40		42		24
 			15		43		44		25
 			16		45		47		26
@@ -276,35 +257,31 @@
 			72		186		188		127
 			72		189		190		130
 			74		191		193		133
-			75		194		196		137
-			76		197		198		141
-			77		199		201		145
-			78		202		203		149
-			79		204		206		153
-			80		207		208		157
-			81		209		211		161
-			82		212		213		165
-			83		214		216		169
-			84		217		218		173
-			85		219		221		177
-			86		222		223		181
-			87		224		226		185
-			88		227		228		189
-			89		229		231		193
-			90		232		233		197
-			91		234		236		201
-			92		237		238		205
-			93		239		241		209
-			94		242		243		213
-			95		244		246		217
-			96		247		248		221
-			97		249		251		225
-			98		252		253		229
-			99		254		255		233
-		>;
-		samsung,hbm_candela_map_table_revA = <
-			0	0	255	255	0
-			0	256	306	306	6
+			75		194		196		136
+			76		197		198		139
+			77		199		201		142
+			78		202		203		145
+			79		204		206		148
+			80		207		208		151
+			81		209		211		154
+			82		212		213		157
+			83		214		216		160
+			84		217		218		163
+			85		219		221		166
+			86		222		223		169
+			87		224		226		172
+			88		227		228		175
+			89		229		231		177
+			90		232		233		179
+			91		234		236		181
+			92		237		238		183
+			93		239		241		185
+			94		242		243		187
+			95		244		246		189
+			96		247		248		191
+			97		249		251		193
+			98		252		253		195
+			99		254		255		197
 		>;
 	};
 };

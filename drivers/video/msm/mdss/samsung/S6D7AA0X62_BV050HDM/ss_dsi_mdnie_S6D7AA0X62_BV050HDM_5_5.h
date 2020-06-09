@@ -29,12 +29,8 @@ Copyright (C) 2012, Samsung Electronics. All rights reserved.
  * 02110-1301, USA.
  *
 */
-
-
 #ifndef _SS_DSI_MDNIE_S6D7AA0X62_BV050HDM_
 #define _SS_DSI_MDNIE_S6D7AA0X62_BV050HDM_
-
-/* 2015.04.08 */
 
 #include "../ss_dsi_mdnie_lite_common.h"
 
@@ -328,9 +324,9 @@ static char DSI0_NEGATIVE_MDNIE_6[] ={
 0x08, //roi_ctrl rgb_if_type mdnie_en mask 00 00 0 000
 0x30, //scr_roi 1 scr algo_roi 1 algo 00 1 0 00 1 0
 0x02, //HSIZE
-0xD0, 
+0xD0,
 0x05, //VSIZE
-0x00, 
+0x00,
 0x00, //sharpen cc gamma 00 0 0
 //end
 };
@@ -853,7 +849,7 @@ static char DSI0_UI_MDNIE_4[] = {
 
 static char DSI0_UI_MDNIE_5[] ={
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,
@@ -989,7 +985,7 @@ static char DSI0_OUTDOOR_MDNIE_4[] ={
 
 static char DSI0_OUTDOOR_MDNIE_5[] ={
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,
@@ -1127,7 +1123,7 @@ static char DSI0_VIDEO_MDNIE_4[] = {
 
 static char DSI0_VIDEO_MDNIE_5[] ={
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,
@@ -1266,7 +1262,7 @@ static char DSI0_CAMERA_MDNIE_4[] ={
 
 static char DSI0_CAMERA_MDNIE_5[] ={
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,
@@ -1405,7 +1401,7 @@ static char DSI0_GALLERY_MDNIE_4[] ={
 
 static char DSI0_GALLERY_MDNIE_5[] = {
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,
@@ -1542,7 +1538,7 @@ static char DSI0_VT_MDNIE_4[] = {
 };
 static char DSI0_VT_MDNIE_5[] = {
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,
@@ -1679,7 +1675,7 @@ static char DSI0_BROWSER_MDNIE_4[] = {
 
 static char DSI0_BROWSER_MDNIE_5[] = {
 0xEC,
-0x04, //cc r1 0.15
+0x04, //cc r1 0.1
 0x88,
 0x1f, //cc r2
 0xa6,

@@ -39,7 +39,6 @@ Copyright (C) 2012, Samsung Electronics. All rights reserved.
 #endif
 
 static int is_first_boot = 1;
-
 static int mdss_panel_on_pre(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	struct samsung_display_driver_data *vdd = check_valid_ctrl(ctrl);
@@ -55,7 +54,7 @@ static int mdss_panel_on_pre(struct mdss_dsi_ctrl_pdata *ctrl)
 
 	return true;
 }
-static void update_mdnie_tft_cmds(struct mdss_dsi_ctrl_pdata *ctrl)
+static void backlight_tft_late_on(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	struct samsung_display_driver_data *vdd = check_valid_ctrl(ctrl);
 
@@ -64,14 +63,26 @@ static void update_mdnie_tft_cmds(struct mdss_dsi_ctrl_pdata *ctrl)
 		return;
 	}
 
+	if(vdd->auto_brightness==6)
+		vdd->panel_func.samsung_bl_ic_outdoor(1);
+
+	pr_info("%s : Backlight is on\n", __func__);
 	if (!mdss_panel_attach_get(ctrl)) {
 		pr_err("%s: mdss_panel_attach_get(%d) : %d\n",__func__, ctrl->ndx, mdss_panel_attach_get(ctrl));
 		return;
 	}
+}
+static int mdss_panel_off_pre(struct mdss_dsi_ctrl_pdata *ctrl)
+{
+	struct samsung_display_driver_data *vdd = check_valid_ctrl(ctrl);
 
-	if (vdd->support_mdnie_lite)
-		update_dsi_tcon_mdnie_register(vdd);
+	if (IS_ERR_OR_NULL(vdd)) {
+		pr_err("%s: Invalid data ctrl : 0x%zx vdd : 0x%zx", __func__, (size_t)ctrl, (size_t)vdd);
+		return false;
+	}
 
+	pr_info("%s %d\n", __func__, ctrl->ndx);
+	return true;
 }
 static int mdss_panel_on_post(struct mdss_dsi_ctrl_pdata *ctrl)
 {
@@ -95,7 +106,6 @@ static int mdss_panel_on_post(struct mdss_dsi_ctrl_pdata *ctrl)
 
 	return true;
 }
-
 static int mdss_panel_revision(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	struct samsung_display_driver_data *vdd = check_valid_ctrl(ctrl);
@@ -113,33 +123,16 @@ static int mdss_panel_revision(struct mdss_dsi_ctrl_pdata *ctrl)
 static struct dsi_panel_cmds * mdss_brightness_tft_pwm(struct mdss_dsi_ctrl_pdata *ctrl, int *level_key)
 {
 	struct samsung_display_driver_data *vdd = check_valid_ctrl(ctrl);
-
 	if (IS_ERR_OR_NULL(vdd)) {
 		pr_err("%s: Invalid data ctrl : 0x%zx vdd : 0x%zx", __func__, (size_t)ctrl, (size_t)vdd);
 		return NULL;
 	}
-	set_auto_brightness_value(vdd, ctrl->ndx);
-
-	if (vdd->bl_level > 255)
-		vdd->bl_level = 255;
-
 	vdd->scaled_level = get_scaled_level(vdd, ctrl->ndx);
-
 	pr_info("%s bl_level : %d scaled_level : %d\n", __func__, vdd->bl_level, vdd->scaled_level);
 
 	vdd->dtsi_data[ctrl->ndx].tft_pwm_tx_cmds->cmds->payload[1] = vdd->scaled_level ;
-
-	if(vdd->mdss_panel_tft_outdoormode_update)
-		vdd->mdss_panel_tft_outdoormode_update(ctrl);
-
-	if (vdd->support_mdnie_lite)
-		update_dsi_tcon_mdnie_register(vdd);
-
-	*level_key = 0;
-
 	return &vdd->dtsi_data[ctrl->ndx].tft_pwm_tx_cmds[vdd->panel_revision];
 }
-
 static void mdss_panel_tft_outdoormode_update(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	struct samsung_display_driver_data *vdd = check_valid_ctrl(ctrl);
@@ -164,7 +157,6 @@ static void mdss_panel_tft_outdoormode_update(struct mdss_dsi_ctrl_pdata *ctrl)
 	}
 	vdd->prev_auto_brightness =	vdd->auto_brightness;
 }
-
 static void dsi_update_mdnie_data(void)
 {
 	/* Update mdnie command */
@@ -272,8 +264,9 @@ static void mdss_panel_init(struct samsung_display_driver_data *vdd)
 	/* ON/OFF */
 	vdd->panel_func.samsung_panel_on_pre = mdss_panel_on_pre;
 	vdd->panel_func.samsung_panel_on_post = mdss_panel_on_post;
-	vdd->panel_func.samsung_panel_off_pre = NULL;
+	vdd->panel_func.samsung_panel_off_pre = mdss_panel_off_pre;
 	vdd->panel_func.samsung_panel_off_post = NULL;
+	vdd->panel_func.samsung_backlight_late_on = backlight_tft_late_on;
 
 	/* DDI RX */
 	vdd->panel_func.samsung_panel_revision = mdss_panel_revision;
@@ -296,7 +289,6 @@ static void mdss_panel_init(struct samsung_display_driver_data *vdd)
 	vdd->panel_func.samsung_brightness_vint = NULL;
 	vdd->panel_func.samsung_brightness_gamma = NULL;
 	vdd->brightness[0].brightness_packet_tx_cmds_dsi.link_state = DSI_HS_MODE;
-	vdd->panel_func.samsung_backlight_late_on = update_mdnie_tft_cmds;
 	vdd->mdss_panel_tft_outdoormode_update=mdss_panel_tft_outdoormode_update;
 
 	dsi_update_mdnie_data();

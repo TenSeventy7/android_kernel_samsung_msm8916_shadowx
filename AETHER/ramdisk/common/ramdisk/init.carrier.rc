@@ -1,0 +1,272 @@
+# Copyright (C) 2012 The Android Open Source Project
+#
+# IMPORTANT: Do not create world writable files or directories.
+# This is a common source of Android security bugs.
+#
+import init.fac.rc
+
+on init
+
+on post-fs-data
+
+#Private Mode
+    mkdir /mnt/shell/ 0750 shell shell
+    mkdir /mnt/shell/privatemode 0700 system system
+    mkdir /storage/Private 0000 system system
+    mkdir /data/privatemode 0770 system system
+    chown system system /data/privatemode
+    restorecon /data/privatemode
+
+# Create carrier folder for HiddenMenu
+on post-fs
+    mkdir /efs/carrier 0755 system system
+
+# Permission for NXP NFC
+    chmod 0660 /dev/pn547
+    chown nfc nfc /dev/pn547
+# Permissions for NXP ESE
+    chmod 0660 /dev/p61
+    chown system system /dev/p61
+
+# Permissions for  LSI NFC
+    chmod 0660 /dev/sec-nfc
+    chown nfc nfc /dev/sec-nfc
+# Permissions for S.LSI ESE
+    chmod 0660 /dev/p3
+    chown system system /dev/p3
+
+
+#ItsOn Property
+    mkdir /dev/socket/itson 02771 itson itson
+    start itsonbs
+
+on early-boot
+    chown bluetooth net_bt_stack /dev/ttyHS0
+    chmod 0660 /dev/ttyHS0
+
+on boot
+
+# MSP FactoryApp
+    mkdir /efs/FactoryApp 0775 system system
+
+#SystemFramework
+    chown system system /data/cache/backup
+    chmod 0711 /data/cache/backup
+    chown system system /data/cache/backup_stage
+    chmod 0711 /data/cache/backup_stage
+
+
+# permission for Input Device(Touchkey).
+    chown radio system /sys/class/sec/sec_touchkey/glove_mode
+    chown radio system /sys/class/sec/sec_touchkey/touchkey_firm_update
+    chown system radio /sys/class/sec/sec_touchkey/sar_enable
+    chown system radio /sys/class/sec/sec_touchkey/sw_reset
+    chown system radio /sys/class/sec/sec_touchkey/touchkey_earjack	
+
+#Backup/Restore
+    chown system system /cache/backup
+    chmod 0711 /cache/backup
+    chown system system /cache/backup_stage
+    chmod 0711 /cache/backup_stage
+
+# Audio NXP
+    chmod 0660 /dev/i2c-4
+    chown system system /dev/i2c-4
+
+# SSWAP
+    write /proc/sys/vm/swappiness 130
+
+# IMS Stack
+service imsd /system/bin/imsd
+    class main
+    socket imsd stream 0660 system system
+    user root
+    group system radio net_raw inet net_admin readproc
+
+# permissions for bluetooth.
+    setprop ro.bt.bdaddr_path "/efs/bluetooth/bt_addr"
+    chown bluetooth net_bt_stack ro.bt.bdaddr_path
+    chown radio net_bt_stack /efs/bluetooth/bt_addr
+    chmod 0640 /efs/bluetooth/bt_addr
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+
+# sem_daemon permission
+    chown system system /efs/sec_efs/ssp_data
+    chmod 0644 /efs/sec_efs/ssp_data
+
+# IPSec for VOLTE
+    chown root system /dev/socket
+    chmod 0775 /dev/socket
+
+on fs
+
+# Fingerprint
+    mkdir /dev/validity 0770 system system
+    mkdir /data/validity 0770 system system
+
+# Permissions for input_booster
+    chown system radio /sys/class/input_booster/level
+    chown system radio /sys/class/input_booster/head
+    chown system radio /sys/class/input_booster/tail
+
+# Support Preload install apks
+    mkdir /preload 0771 system system
+
+#For Absolute Persistence Partition
+    mkdir /persdata 0755 system system
+    mkdir /persdata/absolute 0750 system system
+
+    wait /dev/block/bootdevice/by-name/persdata
+    mount ext4 /dev/block/bootdevice/by-name/persdata /persdata/absolute nosuid nodev noatime noauto_da_alloc,discard,journal_async_commit,errors=panic
+
+    chown system system /persdata
+    chmod 0755 /persdata
+    chown system system /persdata/absolute
+    chmod 0750 /persdata/absolute
+
+# fm_radio
+    chmod 0640 /dev/radio0
+    chown system system /dev/radio0
+
+# SENSOR FRAMEWORK : starts bio auth Service
+service bauthserver /system/bin/bauthserver
+    class late_start
+    user system
+    group system
+
+# umount service 
+service umount_service /system/bin/umount /preload 
+    disabled 
+    oneshot 
+ 
+# Support Preload install apks 
+on property:persist.sys.storage_preload=1
+    mount ext4 /dev/block/bootdevice/by-name/hidden /preload nosuid nodev ro barrier=1
+    setprop storage.preload.complete 1
+
+on property:persist.sys.storage_preload=0
+    start umount_service
+
+service ftm_ptt /system/bin/ftm_ptt -d
+    user root
+    group radio system
+    disabled
+
+# Fingerprint
+	mkdir /data/egislog 0770 system system
+
+# SENSORS
+# Fingerprint_sensor
+    chown system radio /sys/class/fingerprint/fingerprint/type_check
+    chown system radio /sys/class/fingerprint/fingerprint/name
+    chown system radio /sys/class/fingerprint/fingerprint/vendor
+
+# SENSOR FRAMEWORK : starts fingerprintService
+service vcsFPService /system/bin/vcsFPService
+    class late_start
+    user system
+    group system
+
+# sem_daemon
+service sem_daemon /system/bin/sem_daemon
+    class core
+    user system
+    group system nfc
+    disabled
+
+on property:sys.boot_completed=1
+    setprop security.semdaemonfinish 0
+    start sem_daemon
+
+on property:security.semdaemonfinish=1
+    stop sem_daemon
+
+# LPTCP Controller service
+service lptcpgc /system/bin/lptcpController
+    class main
+    user system
+    group system
+
+# Blowfish
+service launcher /system/bin/launcher	/firmware/image/tzm
+    class core
+    user root
+    group root
+    disabled
+    oneshot
+
+service tz_service /system/bin/tzdaemon
+    class core
+    socket tz stream 0666 system system
+    user system
+    group system
+    disabled
+
+service taa_service /system/bin/taadaemon
+    class core
+    user system
+    group system
+    disabled
+
+on property:sys.qseecomd.enable=true
+    start launcher
+
+on property:sys.blowfish.loaded=true
+    mkdir /data/tee 0700 system system
+    start tz_service
+
+on property:sys.tzdaemon=Ready
+    start taa_service
+
+on property:init.svc.tz_service=stopped
+    setprop sys.tzdaemon NotReady
+
+#h2k permission
+   chmod 0644 /efs/redata.bin
+   chmod 0644 /efs/cpk/redata.bin
+   chown radio radio /efs/h2k.dat
+   chown radio radio /efs/cpk/h2k.dat
+   chmod 0644 /efs/h2k.dat
+   chmod 0644 /efs/cpk/h2k.dat
+
+# insthk
+service insthk /system/bin/insthk
+    class main
+    user root
+    disabled
+    oneshot
+on property:sys.tzdaemon=Ready
+   start insthk
+
+# ItsOn Service
+service itsonbs /system/vendor/itson/itson-bootstrapper.sh
+    oneshot
+    critical
+    seclabel u:r:itsonbs:s0
+
+service tbaseLoader /system/bin/tbaseLoader tbase
+#    class core
+#    user root
+#    group root
+#    disabled
+#    oneshot
+
+on property:sys.qseecomd.enable=true
+#   start tbaseLoader
+
+# IPSec for VOLTE
+service ipsec-daemon /system/bin/IPSecService
+    class main
+    socket ipsec_socket stream 660 system system
+    user system
+    group system net_raw inet net_admin
+
+# SSWAP
+service swapon /sbin/sswap -s
+    class core
+    user root
+    group root
+    seclabel u:r:sswap:s0
+    oneshot

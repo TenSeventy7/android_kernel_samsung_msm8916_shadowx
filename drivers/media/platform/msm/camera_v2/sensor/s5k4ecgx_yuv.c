@@ -19,10 +19,8 @@
 
 #include "s5k4ecgx.h"
 
-#if defined (CONFIG_SEC_GTES_PROJECT)
+#if defined (CONFIG_SEC_GTEL_PROJECT) || defined(CONFIG_SEC_GTES_PROJECT)
 #include "s5k4ecgx_regs_gte.h"
-#elif defined (CONFIG_SEC_GTEL_PROJECT)
-#include "s5k4ecgx_regs_gtel.h"
 #elif defined(CONFIG_SEC_J1X_PROJECT)
 #include "s5k4ecgx_regs_j1x.h"
 #else
@@ -104,7 +102,7 @@ int s5k4ecgx_sensor_match_id(struct msm_sensor_ctrl_t *s_ctrl)
     sensor_name = s_ctrl->sensordata->sensor_name;
 
     if (!sensor_i2c_client || !slave_info || !sensor_name) {
-        pr_err("%s:%d failed: %p %p %p\n",
+        pr_err("%s:%d failed: %pK %pK %pK\n",
                 __func__, __LINE__, sensor_i2c_client, slave_info,
                 sensor_name);
         return -EINVAL;
@@ -1061,17 +1059,7 @@ int32_t s5k4ecgx_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
                     msleep(380);
                     s5k4ecgx_check_ae_stable(s_ctrl);
                 }
-                switch (s5k4ecgx_ctrl.fixed_fps_val)
-                {
-                    case 15000:
-                        S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_15);
-                        break;
-                    case 30000:
-                        S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_30);
-                        break;
-                    default:
-                        S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_auto);
-                }
+                S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_30);
                 S5K4ECGX_WRITE_LIST_BURST(s5k4ecgx_camcorder);
                 s5k4ecgx_set_exposure_camcorder(s_ctrl,s5k4ecgx_ctrl.settings.exposure);
 
@@ -1100,11 +1088,24 @@ int32_t s5k4ecgx_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 
                     s5k4ecgx_set_iso(s_ctrl, s5k4ecgx_ctrl.settings.iso);
 
-            if(cdata->flicker_type == MSM_CAM_FLICKER_50HZ) {
-                S5K4ECGX_WRITE_LIST(s5k4ecgx_anti_banding_50hz_auto);
-            } else if(cdata->flicker_type == MSM_CAM_FLICKER_60HZ) {
-                S5K4ECGX_WRITE_LIST(s5k4ecgx_anti_banding_60hz_auto);
-            }
+		    if(cdata->flicker_type == MSM_CAM_FLICKER_50HZ) {
+			    S5K4ECGX_WRITE_LIST(s5k4ecgx_anti_banding_50hz_auto);
+		    } else if(cdata->flicker_type == MSM_CAM_FLICKER_60HZ) {
+			    S5K4ECGX_WRITE_LIST(s5k4ecgx_anti_banding_60hz_auto);
+		    }
+
+                }
+
+                switch (s5k4ecgx_ctrl.fixed_fps_val)
+                {
+                    case 15000:
+                        S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_15);
+                        break;
+                    case 30000:
+                        S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_30);
+                        break;
+                    default:
+                        S5K4ECGX_WRITE_LIST(s5k4ecgx_fps_auto);
                 }
 
                 s5k4ecgx_ctrl.streamon = 1;

@@ -3783,7 +3783,6 @@ static int venus_hfi_init_bus(struct venus_hfi_device *device)
                 goto err_init_bus;
         }
         device->bus_load.vote_data_count = 0;
-
 	return rc;
 err_init_bus:
 	venus_hfi_deinit_bus(device);

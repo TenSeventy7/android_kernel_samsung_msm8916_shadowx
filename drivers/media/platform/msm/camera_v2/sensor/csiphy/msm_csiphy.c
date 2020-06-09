@@ -323,7 +323,7 @@ static int msm_csiphy_init(struct csiphy_device *csiphy_dev)
 			csiphy_dev->num_clk, 1);
 	} else if (csiphy_dev->hw_dts_version >= CSIPHY_VERSION_V30) {
 		if (!csiphy_dev->clk_mux_mem || !csiphy_dev->clk_mux_io) {
-			pr_err("%s clk mux mem %p io %p\n", __func__,
+			pr_err("%s clk mux mem %pK io %pK\n", __func__,
 				csiphy_dev->clk_mux_mem,
 				csiphy_dev->clk_mux_io);
 			rc = -ENOMEM;
@@ -420,7 +420,7 @@ static int msm_csiphy_init(struct csiphy_device *csiphy_dev)
 			csiphy_dev->num_clk, 1);
 	} else if (csiphy_dev->hw_dts_version >= CSIPHY_VERSION_V30) {
 		if (!csiphy_dev->clk_mux_mem || !csiphy_dev->clk_mux_io) {
-			pr_err("%s clk mux mem %p io %p\n", __func__,
+			pr_err("%s clk mux mem %pK io %pK\n", __func__,
 				csiphy_dev->clk_mux_mem,
 				csiphy_dev->clk_mux_io);
 			rc = -ENOMEM;

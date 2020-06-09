@@ -502,7 +502,7 @@ static int eeprom_config_read_data(struct msm_eeprom_ctrl_t *e_ctrl,
 	rc = e_ctrl->i2c_client.i2c_func_tbl->i2c_read_seq(
 			&(e_ctrl->i2c_client), cdata->cfg.read_data.addr,
 			buf, cdata->cfg.read_data.num_bytes);
-	CDBG("%s:  read data, rc addr = 0x%p %d %d\n", __func__, (void*)cdata->cfg.read_data.addr, cdata->cfg.read_data.num_bytes, rc);
+	CDBG("%s:  read data, rc addr = 0x%pK %d %d\n", __func__, (void*)cdata->cfg.read_data.addr, cdata->cfg.read_data.num_bytes, rc);
 	if (rc < 0) {
 		pr_err("%s: failed to read data, rc %d\n", __func__, rc);
 		goto POWER_DOWN;
@@ -749,14 +749,14 @@ static int msm_eeprom_config(struct msm_eeprom_ctrl_t *e_ctrl,
 		CDBG("%s E CFG_EEPROM_GET_INFO\n", __func__);
 		cdata->is_supported = e_ctrl->is_supported;
 		length = strlen(e_ctrl->eboard_info->eeprom_name) + 1;
-			if (length > MAX_EEPROM_NAME) {
+		if (length > MAX_EEPROM_NAME) {
 			pr_err("%s:%d invalid eeprom_name length %d\n",
-			__func__, __LINE__, (int)length);
+				__func__,__LINE__, (int)length);
 			rc = -EINVAL;
 			break;
 		}
-		
-		memcpy(cdata->cfg.eeprom_name, e_ctrl->eboard_info->eeprom_name, length);
+		memcpy(cdata->cfg.eeprom_name,
+			e_ctrl->eboard_info->eeprom_name, length);
 		break;
 	case CFG_EEPROM_GET_CAL_DATA:
 		CDBG("%s E CFG_EEPROM_GET_CAL_DATA\n", __func__);

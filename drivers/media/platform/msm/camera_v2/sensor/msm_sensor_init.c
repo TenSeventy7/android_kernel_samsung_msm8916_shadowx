@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2016, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -542,6 +542,7 @@ static int __init msm_sensor_init_module(void)
 	s_init = kzalloc(sizeof(struct msm_sensor_init_t), GFP_KERNEL);
 	if (!s_init) {
 		class_destroy(camera_class);
+		pr_err("failed: no memory s_init %pK", NULL);
 		return -ENOMEM;
 	}
 

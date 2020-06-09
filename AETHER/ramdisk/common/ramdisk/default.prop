@@ -32,7 +32,7 @@ dalvik.vm.appimageformat=lz4
 debug.atrace.tags.enableflags=0
 camera2.portability.force_api=1
 persist.sys.usb.config=mtp,adb
-# QuasarKernel Tweaks
+# AetherAura tweaks
 ro.securestorage.support=false
 ro.frp.pst=
 ro.config.tima=0

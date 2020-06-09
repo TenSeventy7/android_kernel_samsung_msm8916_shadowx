@@ -190,11 +190,7 @@ static int32_t msm_sensor_driver_create_i2c_v4l_subdev
 	s_ctrl->msm_sd.sd.entity.name =	s_ctrl->msm_sd.sd.name;
 	s_ctrl->sensordata->sensor_info->session_id = session_id;
 	s_ctrl->msm_sd.close_seq = MSM_SD_CLOSE_2ND_CATEGORY | 0x3;
-	rc = msm_sd_register(&s_ctrl->msm_sd);
-	if (rc < 0) {
-		pr_err("failed: msm_sd_register rc %d", rc);
-		return rc;
-	}
+	msm_sd_register(&s_ctrl->msm_sd);
 	CDBG("%s:%d\n", __func__, __LINE__);
 	return rc;
 }
@@ -224,11 +220,7 @@ static int32_t msm_sensor_driver_create_v4l_subdev
 	s_ctrl->msm_sd.sd.entity.group_id = MSM_CAMERA_SUBDEV_SENSOR;
 	s_ctrl->msm_sd.sd.entity.name = s_ctrl->msm_sd.sd.name;
 	s_ctrl->msm_sd.close_seq = MSM_SD_CLOSE_2ND_CATEGORY | 0x3;
-	rc = msm_sd_register(&s_ctrl->msm_sd);
-	if (rc < 0) {
-		pr_err("failed: msm_sd_register rc %d", rc);
-		return rc;
-	}
+	msm_sd_register(&s_ctrl->msm_sd);
 	return rc;
 }
 
@@ -435,8 +427,10 @@ int32_t msm_sensor_driver_probe(void *setting)
 
 	/* Allocate memory for slave info */
 	slave_info = kzalloc(sizeof(*slave_info), GFP_KERNEL);
-	if (!slave_info) 
+	if (!slave_info) {
+		pr_err("failed: no memory slave_info %pK", slave_info);
 		return -ENOMEM;
+	}
 
 	if (copy_from_user(slave_info, (void *)setting, sizeof(*slave_info))) {
 		pr_err("failed: copy_from_user");
@@ -517,7 +511,7 @@ int32_t msm_sensor_driver_probe(void *setting)
 	/* Allocate memory for power up setting */
 	power_setting = kzalloc(sizeof(*power_setting) * size, GFP_KERNEL);
 	if (!power_setting) {
-		pr_err("failed: no memory power_setting %p", power_setting);
+		pr_err("failed: no memory power_setting %pK", power_setting);
 		rc = -ENOMEM;
 		goto FREE_SLAVE_INFO;
 	}
@@ -544,7 +538,7 @@ int32_t msm_sensor_driver_probe(void *setting)
 	power_down_setting =
 		kzalloc(sizeof(*power_setting) * size_down, GFP_KERNEL);
 	if (!power_down_setting) {
-		pr_err("failed: no memory power_setting %p",
+		pr_err("failed: no memory power_setting %pK",
 						power_down_setting);
 		rc = -ENOMEM;
 		goto FREE_POWER_SETTING;
@@ -591,8 +585,11 @@ int32_t msm_sensor_driver_probe(void *setting)
 	}
 
 	camera_info = kzalloc(sizeof(struct msm_camera_slave_info), GFP_KERNEL);
-	if (!camera_info) 
+	if (!camera_info) {
+		pr_err("failed: no memory slave_info %pK", camera_info);
 		goto FREE_POWER_DOWN_SETTING;
+
+	}
 
 	/* Fill power up setting and power up setting size */
 	power_info = &s_ctrl->sensordata->power_info;
@@ -692,6 +689,12 @@ int32_t msm_sensor_driver_probe(void *setting)
 	pr_err("%s probe succeeded", slave_info->sensor_name);
 
 	/*
+	  Set probe succeeded flag to 1 so that no other camera shall
+	 * probed on this slot
+	 */
+	s_ctrl->is_probe_succeed = 1;
+
+	/*
 	 * Create /dev/videoX node, comment for now until dummy /dev/videoX
 	 * node is created and used by HAL
 	 */
@@ -748,11 +751,7 @@ int32_t msm_sensor_driver_probe(void *setting)
 	if(probe_fail) {
 		rc = probe_fail;
 	}
-	/*
-	 * Set probe succeeded flag to 1 so that no other camera shall
-	 * probed on this slot
-	 */
-	s_ctrl->is_probe_succeed = 1;
+
 	return rc;
 
 CAMERA_POWER_DOWN:
@@ -779,7 +778,7 @@ static int32_t msm_sensor_driver_get_gpio_data(
 
 	/* Validate input paramters */
 	if (!sensordata || !of_node) {
-		pr_err("failed: invalid params sensordata %p of_node %p",
+		pr_err("failed: invalid params sensordata %pK of_node %pK",
 			sensordata, of_node);
 		return -EINVAL;
 	}
@@ -1041,8 +1040,10 @@ static int32_t msm_sensor_driver_platform_probe(struct platform_device *pdev)
 
 	/* Create sensor control structure */
 	s_ctrl = kzalloc(sizeof(*s_ctrl), GFP_KERNEL);
-	if (!s_ctrl) 
+	if (!s_ctrl) {
+		pr_err("failed: no memory s_ctrl %pK", s_ctrl);
 		return -ENOMEM;
+	}
 
 	platform_set_drvdata(pdev, s_ctrl);
 
@@ -1085,8 +1086,10 @@ static int32_t msm_sensor_driver_i2c_probe(struct i2c_client *client,
 
 	/* Create sensor control structure */
 	s_ctrl = kzalloc(sizeof(*s_ctrl), GFP_KERNEL);
-	if (!s_ctrl) 
+	if (!s_ctrl) {
+		pr_err("failed: no memory s_ctrl %pK", s_ctrl);
 		return -ENOMEM;
+	}
 
 	i2c_set_clientdata(client, s_ctrl);
 

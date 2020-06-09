@@ -53,7 +53,6 @@ int32_t msm_sensor_flash_native_control(struct msm_sensor_ctrl_t *s_ctrl,
 {
 
     if(system_rev >= 5){
-#if defined(CONFIG_FLED_KTD2692)
 	struct ioctl_native_cmd *cam_info = (struct ioctl_native_cmd *)argp;
 
 	if(s_ctrl->sensordata->slave_info->sensor_id == 0x5e30){
@@ -67,10 +66,9 @@ int32_t msm_sensor_flash_native_control(struct msm_sensor_ctrl_t *s_ctrl,
 			pr_err("%s : KTD Invalid LED value\n", __func__);
 		}
 	}
-#endif
 	return 0;
     }else{
-#if defined(CONFIG_FLED_LM3632)
+	#if defined(CONFIG_FLED_LM3632)
 	struct ioctl_native_cmd *cam_info = (struct ioctl_native_cmd *)argp;
 
 	if(s_ctrl->sensordata->slave_info->sensor_id == 0x5e30){
@@ -84,7 +82,7 @@ int32_t msm_sensor_flash_native_control(struct msm_sensor_ctrl_t *s_ctrl,
 			pr_err("%s : Invalid LED value\n", __func__);
 		}
 	}
-#endif
+	#endif
 	return 0;
 }
 }
@@ -542,7 +540,6 @@ int msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 			__func__, __LINE__, s_ctrl);
 		return -EINVAL;
 	}
-
 
 	power_info = &s_ctrl->sensordata->power_info;
 	sensor_i2c_client = s_ctrl->sensor_i2c_client;
@@ -1590,7 +1587,7 @@ int32_t msm_sensor_platform_probe(struct platform_device *pdev,
 	uint32_t session_id;
 	unsigned long mount_pos = 0;
 	s_ctrl->pdev = pdev;
-	CDBG("%s called data %p\n", __func__, data);
+	CDBG("%s called data %pK\n", __func__, data);
 	CDBG("%s pdev name %s\n", __func__, pdev->id_entry->name);
 	if (pdev->dev.of_node) {
 		rc = msm_sensor_get_dt_data(pdev->dev.of_node, s_ctrl);
@@ -1852,7 +1849,7 @@ int32_t msm_sensor_init_default_params(struct msm_sensor_ctrl_t *s_ctrl)
 	/* Initialize clock info */
 	clk_info = kzalloc(sizeof(cam_8974_clk_info), GFP_KERNEL);
 	if (!clk_info) {
-		pr_err("%s:%d failed no memory clk_info %p\n", __func__,
+		pr_err("%s:%d failed no memory clk_info %pK\n", __func__,
 			__LINE__, clk_info);
 		rc = -ENOMEM;
 		goto FREE_CCI_CLIENT;

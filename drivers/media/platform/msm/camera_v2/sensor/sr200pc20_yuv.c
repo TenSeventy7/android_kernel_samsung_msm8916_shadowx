@@ -514,9 +514,6 @@ int32_t sr200pc20_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 					sr200pc20_set_resolution(s_ctrl , resolution , cdata->flicker_type);
 					CDBG("CFG_SET_RESOLUTION END *** res = %d" , resolution);
 				} else{
-					sr200pc20_set_effect( s_ctrl , sr200pc20_ctrl.settings.effect);
-					sr200pc20_set_white_balance( s_ctrl, sr200pc20_ctrl.settings.wb);
-					sr200pc20_set_exposure_compensation( s_ctrl , sr200pc20_ctrl.settings.exposure);
 					sr200pc20_set_resolution(s_ctrl , resolution , cdata->flicker_type);
 					CDBG("CFG_SET_RESOLUTION END *** res = %d" , resolution);
 				}

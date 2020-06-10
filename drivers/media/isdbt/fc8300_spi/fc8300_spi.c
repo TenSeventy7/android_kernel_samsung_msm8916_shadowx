@@ -95,7 +95,7 @@ static struct spi_driver fc8300_spi_driver = {
 		.of_match_table = tmm_spi_match_table,
 	},
 	.probe		= fc8300_spi_probe,
-	.remove		= __devexit_p(fc8300_spi_remove),
+	.remove		= fc8300_spi_remove,
 };
 
 static int fc8300_spi_write_then_read(struct spi_device *spi

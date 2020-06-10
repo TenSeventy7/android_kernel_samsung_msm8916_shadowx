@@ -33,9 +33,6 @@
 #include <linux/slab.h>
 #include <linux/gpio.h>
 #include <linux/io.h>
-#ifdef SEC_ENABLE_13SEG_BOOST
-#include <linux/pm_qos.h>
-#endif
 
 #include <linux/gpio.h>
 #include <linux/platform_device.h>
@@ -75,11 +72,6 @@ static struct isdbt_platform_data *isdbt_pdata;
 #define ISDBT_LDO_OFF     0
 
 u8 static_ringbuffer[RING_BUFFER_SIZE];
-
-#ifdef SEC_ENABLE_13SEG_BOOST
-#define FULLSEG_MIN_FREQ	1296000
-static struct pm_qos_request fc8300_cpu_handle;
-#endif
 
 #ifdef TS_DROP_DEBUG
 #define FEATURE_TS_CHECK
@@ -705,13 +697,6 @@ int isdbt_release(struct inode *inode, struct file *filp)
 
 	pr_err("isdbt_release\n");
 
-#ifdef SEC_ENABLE_13SEG_BOOST
-	if (pm_qos_request_active(&fc8300_cpu_handle)) {
-		pr_info("[FC8300] disable boost!!!\n");
-		pm_qos_remove_request(&fc8300_cpu_handle);
-	}
-#endif
-
 	if	(open_cnt <= 0)	{
 		pr_err("tuner_module_entry_close: close error\n");
 		open_cnt = 0;
@@ -929,10 +914,6 @@ long isdbt_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			, DIV_BROADCAST, (u32)info.buff[0], (u32)info.buff[1]);
 
 		if (((u32)info.buff[1] == ISDBTMM_13SEG) || ((u32)info.buff[1] == ISDBT_13SEG)) {
-#ifdef SEC_ENABLE_13SEG_BOOST
-			pr_info("[FC8300] enable boost!\n");
-			pm_qos_add_request(&fc8300_cpu_handle, PM_QOS_CLUSTER0_FREQ_MIN, FULLSEG_MIN_FREQ);
-#endif
 			bbm_com_word_write(hInit, DIV_BROADCAST, BBM_BUF_TS0_START, 0);
 			bbm_com_word_write(hInit, DIV_BROADCAST, BBM_BUF_TS0_END
 					, TS0_32PKT_LENGTH - 1);
@@ -941,12 +922,6 @@ long isdbt_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			   print_log(hInit, "[FC8300] TUNER THRESHOLD: %d\n"
 			   , TS0_32PKT_LENGTH / 2 - 1);
 		}	else	{
-#ifdef SEC_ENABLE_13SEG_BOOST
-			if (pm_qos_request_active(&fc8300_cpu_handle)) {
-				pr_info("[FC8300] 1seg don't need boost. remove!!\n");
-				pm_qos_remove_request(&fc8300_cpu_handle);
-			}
-#endif
 			bbm_com_word_write(hInit, DIV_BROADCAST, BBM_BUF_TS0_START, 0);
 			bbm_com_word_write(hInit, DIV_BROADCAST, BBM_BUF_TS0_END
 				, TS0_5PKT_LENGTH - 1);
@@ -983,13 +958,7 @@ long isdbt_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case IOCTL_ISDBT_TS_STOP:
 		pr_err("[FC8300] IOCTL_ISDBT_TS_STOP\n");
 		hOpen->isdbttype = 0;
-
-#ifdef SEC_ENABLE_13SEG_BOOST
-		if (pm_qos_request_active(&fc8300_cpu_handle)) {
-			pr_info("[FC8300] disable boost!\n");
-			pm_qos_remove_request(&fc8300_cpu_handle);
-		}
-#endif
+        
 		break;
 	case IOCTL_ISDBT_POWER_ON:
 		pr_err("[FC8300] IOCTL_ISDBT_POWER_ON\n");
@@ -1007,12 +976,6 @@ long isdbt_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 	case IOCTL_ISDBT_POWER_OFF:
 		pr_err("[FC8300] IOCTL_ISDBT_POWER_OFF\n");
-#ifdef SEC_ENABLE_13SEG_BOOST
-		if (pm_qos_request_active(&fc8300_cpu_handle)) {
-			pr_info("[FC8300] disable boost!!\n");
-			pm_qos_remove_request(&fc8300_cpu_handle);
-		}
-#endif
 		isdbt_hw_deinit();
 
 		break;

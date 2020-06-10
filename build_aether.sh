@@ -95,6 +95,96 @@ PACK_ZIP()
 	echo "----------------------------------------------"
 	echo " "
 }
+PACK_FORTUNA3G()
+{
+    echo "----------------------------------------------"
+    echo "Starting build for fortuna3g variants."
+    echo "----------------------------------------------"
+    echo "Cleaning up source..."
+    echo " "
+    CLEAN_SOURCE
+    echo " "
+    echo "----------------------------------------------"
+    echo "Starting fortuna3g kernel build..."
+    AE_VARIANT=fortuna3g
+    AE_DEFCON=aether_msm8916_fortuna3g_defconfig
+    BUILD_ZIMAGE
+    BUILD_DTB
+    PACK_IMG
+    PACK_ZIP    
+}
+PACK_FORTUNA3GDTV()
+{
+    echo "----------------------------------------------"
+    echo "Starting build for fortuna3gdtv variants."
+    echo "----------------------------------------------"
+    echo "Cleaning up source..."
+    echo " "
+    CLEAN_SOURCE
+    echo " "
+    echo "----------------------------------------------"
+    echo "Starting fortuna3gdtv kernel build..."
+    AE_VARIANT=fortuna3gdtv
+    AE_DEFCON=aether_msm8916_fortuna3gdtv_defconfig
+    BUILD_ZIMAGE
+    BUILD_DTB
+    PACK_IMG
+    PACK_ZIP
+}
+PACK_FORTUNAVE3G()
+{
+    echo "----------------------------------------------"
+    echo "Starting build for fortunave3g variants."
+    echo "----------------------------------------------"
+    echo "Cleaning up source..."
+    echo " "
+    CLEAN_SOURCE
+    echo " "
+    echo "----------------------------------------------"
+    echo "Starting fortunave3g kernel build..."
+    AE_VARIANT=fortunave3g
+    AE_DEFCON=aether_msm8916_fortunave3g_defconfig
+    BUILD_ZIMAGE
+    BUILD_DTB
+    PACK_IMG
+    PACK_ZIP
+}
+PACK_FORTUNALTEDX()
+{
+    echo "----------------------------------------------"
+    echo "Starting build for fortunaltedx variants."
+    echo "----------------------------------------------"
+    echo "Cleaning up source..."
+    echo " "
+    CLEAN_SOURCE
+    echo " "
+    echo "----------------------------------------------"
+    echo "Starting fortunaltedx kernel build..."
+    AE_VARIANT=fortunaltedx
+    AE_DEFCON=aether_msm8916_fortunaltedx_defconfig
+    BUILD_ZIMAGE
+    BUILD_DTB
+    PACK_IMG
+    PACK_ZIP
+}
+PACK_GPRIMELTEXX()
+{
+    echo "----------------------------------------------"
+    echo "Starting build for gprimeltexx variants."
+    echo "----------------------------------------------"
+    echo "Cleaning up source..."
+    echo " "
+    CLEAN_SOURCE
+    echo " "
+    echo "----------------------------------------------"
+    echo "Starting gprimeltexx kernel build..."
+    AE_VARIANT=gprimeltexx
+    AE_DEFCON=aether_msm8916_gprimeltexx_defconfig
+    BUILD_ZIMAGE
+    BUILD_DTB
+    PACK_IMG
+    PACK_ZIP
+}
 # Main Menu
 clear
 echo "                  _        _                  "
@@ -115,101 +205,31 @@ do
     case $menuvar in
         "fortuna3g")
             clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortuna3g variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortuna3g kernel build..."
-            AE_VARIANT=fortuna3g
-            AE_DEFCON=aether_msm8916_fortuna3g_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
+            PACK_FORTUNA3G
             read -n1 -r key
             break
             ;;
         "fortuna3gdtv")
             clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortuna3gdtv variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortuna3gdtv kernel build..."
-            AE_VARIANT=fortuna3gdtv
-            AE_DEFCON=aether_msm8916_fortuna3gdtv_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
+            PACK_FORTUNA3GDTV
             read -n1 -r key
             break
             ;;
         "fortunave3g")
             clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortunave3g variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortunave3g kernel build..."
-            AE_VARIANT=fortunave3g
-            AE_DEFCON=aether_msm8916_fortunave3g_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
+            PACK_FORTUNAVE3G
             read -n1 -r key
             break
             ;;
         "fortunaltedx")
             clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortunaltedx variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortunaltedx kernel build..."
-            AE_VARIANT=fortunaltedx
-            AE_DEFCON=aether_msm8916_fortunaltedx_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
+            PACK_FORTUNALTEDX
             read -n1 -r key
             break
             ;;
         "gprimeltexx")
             clear
-            echo "----------------------------------------------"
-            echo "Starting build for gprimeltexx variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting gprimeltexx kernel build..."
-            AE_VARIANT=gprimeltexx
-            AE_DEFCON=aether_msm8916_gprimeltexx_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
+            PACK_GPRIMELTEXX
             read -n1 -r key
             break
             ;;
@@ -217,85 +237,11 @@ do
             clear
             echo "----------------------------------------------"
             echo "Starting build for all supported variants."
-            echo "----------------------------------------------"
-            echo "Starting build for fortuna3g variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortuna3g kernel build..."
-            AE_VARIANT=fortuna3g
-            AE_DEFCON=aether_msm8916_fortuna3g_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
-            clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortuna3gdtv variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortuna3gdtv kernel build..."
-            AE_VARIANT=fortuna3gdtv
-            AE_DEFCON=aether_msm8916_fortuna3gdtv_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
-            clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortunave3g variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortunave3g kernel build..."
-            AE_VARIANT=fortunave3g
-            AE_DEFCON=aether_msm8916_fortunave3g_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
-            clear
-            echo "----------------------------------------------"
-            echo "Starting build for fortunaltedx variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting fortunaltedx kernel build..."
-            AE_VARIANT=fortunaltedx
-            AE_DEFCON=aether_msm8916_fortunaltedx_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
-            clear
-            echo "----------------------------------------------"
-            echo "Starting build for gprimeltexx variants."
-            echo "----------------------------------------------"
-            echo "Cleaning up source..."
-            echo " "
-            CLEAN_SOURCE
-            echo " "
-            echo "----------------------------------------------"
-            echo "Starting gprimeltexx kernel build..."
-            AE_VARIANT=gprimeltexx
-            AE_DEFCON=aether_msm8916_gprimeltexx_defconfig
-            BUILD_ZIMAGE
-            BUILD_DTB
-            PACK_IMG
-            PACK_ZIP
+            PACK_FORTUNA3G
+            PACK_FORTUNA3GDTV
+            PACK_FORTUNALTEDX
+            PACK_FORTUNAVE3G
+            PACK_GPRIMELTEXX
             read -n1 -r key
             break
             ;;

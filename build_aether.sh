@@ -148,6 +148,8 @@ do
             AE_DEFCON=aether_msm8916_fortuna3gdtv_defconfig
             BUILD_ZIMAGE
             BUILD_DTB
+            PACK_IMG
+            PACK_ZIP
             read -n1 -r key
             break
             ;;

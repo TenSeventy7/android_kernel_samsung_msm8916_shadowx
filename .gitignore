@@ -6,8 +6,9 @@
 *.exe
 *.o
 *.so
+*.ko
+*.img
 /output
-/final
 
 # Packages #
 ############

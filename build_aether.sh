@@ -108,8 +108,8 @@ echo "                                              "
 echo "     AetherAura $AE_VERSION Build Script      "
 echo "             Coded by CaelestisZ              "
 echo "                                              "
-PS3='Please select your option (1-6): '
-menuvar=("fortuna3g" "fortuna3gdtv" "fortunave3g" "fortunaltedx" "gprimeltexx" "Exit")
+PS3='Please select your option (1-7): '
+menuvar=("fortuna3g" "fortuna3gdtv" "fortunave3g" "fortunaltedx" "gprimeltexx" "build all" "Exit")
 select menuvar in "${menuvar[@]}"
 do
     case $menuvar in
@@ -194,6 +194,92 @@ do
             break
             ;;
         "gprimeltexx")
+            clear
+            echo "----------------------------------------------"
+            echo "Starting build for gprimeltexx variants."
+            echo "----------------------------------------------"
+            echo "Cleaning up source..."
+            echo " "
+            CLEAN_SOURCE
+            echo " "
+            echo "----------------------------------------------"
+            echo "Starting gprimeltexx kernel build..."
+            AE_VARIANT=gprimeltexx
+            AE_DEFCON=aether_msm8916_gprimeltexx_defconfig
+            BUILD_ZIMAGE
+            BUILD_DTB
+            PACK_IMG
+            PACK_ZIP
+            read -n1 -r key
+            break
+            ;;
+        "build all")
+            clear
+            echo "----------------------------------------------"
+            echo "Starting build for all supported variants."
+            echo "----------------------------------------------"
+            echo "Starting build for fortuna3g variants."
+            echo "----------------------------------------------"
+            echo "Cleaning up source..."
+            echo " "
+            CLEAN_SOURCE
+            echo " "
+            echo "----------------------------------------------"
+            echo "Starting fortuna3g kernel build..."
+            AE_VARIANT=fortuna3g
+            AE_DEFCON=aether_msm8916_fortuna3g_defconfig
+            BUILD_ZIMAGE
+            BUILD_DTB
+            PACK_IMG
+            PACK_ZIP
+            clear
+            echo "----------------------------------------------"
+            echo "Starting build for fortuna3gdtv variants."
+            echo "----------------------------------------------"
+            echo "Cleaning up source..."
+            echo " "
+            CLEAN_SOURCE
+            echo " "
+            echo "----------------------------------------------"
+            echo "Starting fortuna3gdtv kernel build..."
+            AE_VARIANT=fortuna3gdtv
+            AE_DEFCON=aether_msm8916_fortuna3gdtv_defconfig
+            BUILD_ZIMAGE
+            BUILD_DTB
+            PACK_IMG
+            PACK_ZIP
+            clear
+            echo "----------------------------------------------"
+            echo "Starting build for fortunave3g variants."
+            echo "----------------------------------------------"
+            echo "Cleaning up source..."
+            echo " "
+            CLEAN_SOURCE
+            echo " "
+            echo "----------------------------------------------"
+            echo "Starting fortunave3g kernel build..."
+            AE_VARIANT=fortunave3g
+            AE_DEFCON=aether_msm8916_fortunave3g_defconfig
+            BUILD_ZIMAGE
+            BUILD_DTB
+            PACK_IMG
+            PACK_ZIP
+            clear
+            echo "----------------------------------------------"
+            echo "Starting build for fortunaltedx variants."
+            echo "----------------------------------------------"
+            echo "Cleaning up source..."
+            echo " "
+            CLEAN_SOURCE
+            echo " "
+            echo "----------------------------------------------"
+            echo "Starting fortunaltedx kernel build..."
+            AE_VARIANT=fortunaltedx
+            AE_DEFCON=aether_msm8916_fortunaltedx_defconfig
+            BUILD_ZIMAGE
+            BUILD_DTB
+            PACK_IMG
+            PACK_ZIP
             clear
             echo "----------------------------------------------"
             echo "Starting build for gprimeltexx variants."

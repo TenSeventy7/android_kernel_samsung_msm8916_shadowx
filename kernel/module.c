@@ -3534,10 +3534,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
 	struct module *mod;
 	long err;
 
-	//FIXME
-	flags |= MODULE_INIT_IGNORE_MODVERSIONS;
-	flags |= MODULE_INIT_IGNORE_VERMAGIC;
-
 #ifdef CONFIG_TIMA_LKMAUTH
 	unsigned long module_len = info->len;
 #endif

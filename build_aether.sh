@@ -46,6 +46,8 @@ BUILD_ZIMAGE()
 	mkdir output
 	make -C $AE_DIR -j5 O=output aether_msm8916_defconfig VARIANT_DEFCONFIG=$AE_DEFCON SELINUX_DEFCONFIG=aether_selinux_defconfig
 	make -C $AE_DIR -j5 O=output
+	mkdir $AE_DIR/AETHER/build/system/lib/modules/pronto
+	cp $AE_DIR/output/drivers/staging/prima/wlan.ko $AE_DIR/AETHER/build/system/lib/modules/pronto/pronto_wlan.ko
 	cp $AE_DIR/output/arch/arm/oprofile/oprofile.ko $AE_DIR/AETHER/build/system/lib/modules/oprofile.ko
 	cp $AE_DIR/output/crypto/ansi_cprng.ko $AE_DIR/AETHER/build/system/lib/modules/ansi_cprng.ko
 	cp $AE_DIR/output/drivers/gator/gator.ko $AE_DIR/AETHER/build/system/lib/modules/gator.ko

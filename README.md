@@ -81,3 +81,14 @@
      - Properly enabled ARCH POWER & gentle fair sleepers
      - Removed prima WLAN drivers
      - Built-in WiFi drivers
+     
+  - __FleurCannon__
+     - Fixed loads of rushes with:
+        - INTELLI_THERMAL
+        - INTELLI_PLUG
+        - MSM_THERMAL_SIMPLE
+        - FAST_CHARGE
+        - POWERSUSPEND
+     - Enabled faster idling of CPU
+     - Re-implemented prima WLAN drivers
+     - cpufreq, cpuidle: add -O3 optimizations

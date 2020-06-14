@@ -79,7 +79,7 @@
 #endif
 
 #ifdef CONFIG_POWERSUSPEND
-#include <linux/earlysuspend.h>
+#include <linux/powersuspend.h>
 #endif
 #include "wlan_hdd_power.h"
 #include "qwlan_version.h"
@@ -107,8 +107,8 @@
 #include "sapInternal.h"
 
 #ifdef CONFIG_POWERSUSPEND
-extern void hdd_suspend_wlan(struct early_suspend *wlan_suspend);
-extern void hdd_resume_wlan(struct early_suspend *wlan_suspend);
+extern void hdd_suspend_wlan(struct power_suspend *wlan_suspend);
+extern void hdd_resume_wlan(struct power_suspend *wlan_suspend);
 #endif
 
 #ifdef FEATURE_OEM_DATA_SUPPORT

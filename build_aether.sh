@@ -240,9 +240,13 @@ do
             echo "----------------------------------------------"
             echo "Starting build for all supported variants."
             PACK_FORTUNA3G
+            clear
             PACK_FORTUNA3GDTV
+            clear
             PACK_FORTUNALTEDX
+            clear
             PACK_FORTUNAVE3G
+            clear
             PACK_GPRIMELTEXX
             read -n1 -r key
             break

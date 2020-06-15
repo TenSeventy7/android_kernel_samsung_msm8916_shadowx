@@ -1,6 +1,6 @@
 # AetherAura
 
-![AetherAura Logo](/info/aetheraura.png)
+![AetherAura Logo](/info/banners/aetheraura.png)
 
 > SE 7.1.1 kernel | FortunaX | Base: J510FN
 

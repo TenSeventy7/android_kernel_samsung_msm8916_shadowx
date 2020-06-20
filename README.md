@@ -92,3 +92,17 @@
      - Enabled faster idling of CPU
      - Re-implemented prima WLAN drivers
      - cpufreq, cpuidle: add -O3 optimizations
+     
+  - __GigavoltHavoc__
+     - Disable loads of unnecessary configurations
+     - MSM adreno idler: slightly more aggressive
+     - Boot on all available cores
+     - Attempt at enhancing power efficiency
+     - Re-enabled kernel tick rate to 300Hz
+     - Set WESTWOOD as default TCP
+     - Set ZEN as default IO Scheduler
+     - Set writeback parameters:
+         - dirty_background_ratio = 10% 
+         - vm_dirty_ratio = 20%
+     - And more!
+     

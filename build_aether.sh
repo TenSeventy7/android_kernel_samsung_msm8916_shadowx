@@ -24,7 +24,7 @@
 #
 clear
 # Init Fields
-AE_VERSION=GigavoltHavoc
+AE_VERSION=Hex
 AE_DATE=$(date +%Y%m%d)
 AE_TOOLCHAIN=/home/caelestisz/AndroidBuilds/Toolchains/linaro-4.8/bin/arm-eabi-
 AE_DIR=$(pwd)
@@ -197,7 +197,7 @@ echo "       / /_|  __|| |_|  __   __|    _/        "
 echo "      / ___| |___|   / |  | |__| |\ \         "
 echo "     /_/   |______\_/|_/  /_____\| \_\        "
 echo "                                              "
-echo "     AetherAura $AE_VERSION Build Script      "
+echo "          AetherAura $AE_VERSION Build Script      "
 echo "             Coded by CaelestisZ              "
 echo "                                              "
 PS3='Please select your option (1-7): '

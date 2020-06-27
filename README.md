@@ -106,3 +106,11 @@
          - vm_dirty_ratio = 20%
      - And more!
      
+  - __Hex__
+     - Introduced Ultra KSM
+	 - Implemented power-oriented workqueues
+	 - Introduced sec_charger controls
+	 - Enable quad-core power savings
+	 - Added support for GPU frequencies upto 620MHz
+     - And more!
+     

@@ -25,7 +25,6 @@
 clear
 # Init Fields
 AE_VERSION=Hex
-AE_DATE=$(date +%Y%m%d)
 AE_TOOLCHAIN=/home/caelestisz/AndroidBuilds/Toolchains/linaro-4.8/bin/arm-eabi-
 AE_DIR=$(pwd)
 # Init Methods
@@ -42,7 +41,7 @@ BUILD_ZIMAGE()
 	echo " "
 	export ARCH=arm
 	export CROSS_COMPILE=$AE_TOOLCHAIN
-	export LOCALVERSION=-AetherAura-$AE_VERSION-$AE_VARIANT-$AE_DATE
+	export LOCALVERSION=-AetherAura-$AE_VERSION-$AE_VARIANT
 	mkdir output
 	make -C $AE_DIR -j5 O=output aether_msm8916_defconfig VARIANT_DEFCONFIG=$AE_DEFCON SELINUX_DEFCONFIG=aether_selinux_defconfig
 	make -C $AE_DIR -j5 O=output
@@ -86,12 +85,12 @@ PACK_ZIP()
 	echo "Packing flashable zip for $AE_VARIANT..."
 	echo " "
 	cd AETHER/build
-	zip -r AetherAura_$AE_VERSION-$AE_VARIANT-$AE_DATE.zip *
+	zip -r AetherAura_$AE_VERSION-$AE_VARIANT.zip *
 	rm -r boot.img
 	rm -r system/lib/modules/*
 	cd ..
 	cd ..
-	mv AETHER/build/AetherAura_$AE_VERSION-$AE_VARIANT-$AE_DATE.zip AETHER/final/AetherAura_$AE_VERSION-$AE_VARIANT-$AE_DATE.zip
+	mv AETHER/build/AetherAura_$AE_VERSION-$AE_VARIANT.zip AETHER/final/AetherAura_$AE_VERSION-$AE_VARIANT.zip
 	echo " "
 	echo "Final builds at /final"
 	echo "----------------------------------------------"
@@ -197,7 +196,7 @@ echo "       / /_|  __|| |_|  __   __|    _/        "
 echo "      / ___| |___|   / |  | |__| |\ \         "
 echo "     /_/   |______\_/|_/  /_____\| \_\        "
 echo "                                              "
-echo "          AetherAura $AE_VERSION Build Script      "
+echo "       AetherAura Kernel Build Script         "
 echo "             Coded by CaelestisZ              "
 echo "                                              "
 PS3='Please select your option (1-7): '

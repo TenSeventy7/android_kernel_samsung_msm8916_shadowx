@@ -24,7 +24,7 @@
 #
 clear
 # Init Fields
-AE_VERSION=Hex
+AE_VERSION=HyperspaceFury
 AE_TOOLCHAIN=/home/caelestisz/AndroidBuilds/Toolchains/linaro-4.8/bin/arm-eabi-
 AE_DIR=$(pwd)
 # Init Methods

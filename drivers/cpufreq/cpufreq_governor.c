@@ -35,13 +35,10 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 	struct cpu_dbs_common_info *cdbs = dbs_data->cdata->get_cpu_cdbs(cpu);
 	struct od_dbs_tuners *od_tuners = dbs_data->tuners;
 	struct cs_dbs_tuners *cs_tuners = dbs_data->tuners;
-	struct ac_dbs_tuners *ac_tuners = dbs_data->tuners;
 	struct cpufreq_policy *policy;
-	struct cpufreq_govinfo govinfo;
 	unsigned int max_load = 0;
 	unsigned int ignore_nice;
 	unsigned int j;
-	unsigned int sampling_rate;
 
 	if (dbs_data->cdata->governor == GOV_ONDEMAND)
 		ignore_nice = od_tuners->ignore_nice_load;
@@ -101,34 +98,6 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 
 		load = 100 * (wall_time - idle_time) / wall_time;
 
-		if (unlikely(wall_time > (2 * sampling_rate) &&
-			     j_cdbs->prev_load)) {
-			load = j_cdbs->prev_load;
-
-			/*
-			 * Perform a destructive copy, to ensure that we copy
-			 * the previous load o	nly once, upon the first wake-up
-			 * from idle.
-			 */
-			j_cdbs->prev_load = 0;
-		} else {
-			load = 100 * (wall_time - idle_time) / wall_time;
-			j_cdbs->prev_load = load;
-		}
-
-		/*
-		 * Send govinfo notification.
-		 * Govinfo notification could potentially wake up another thread
-		 * managed by its clients. Thread wakeups might trigger a load
-		 * change callback that executes this function again. Therefore
-		 * no spinlock could be held when sending the notification.
-		 */
-		govinfo.cpu = j;
-		govinfo.load = load;
-		govinfo.sampling_rate_us = sampling_rate;
-		atomic_notifier_call_chain(&cpufreq_govinfo_notifier_list,
-			CPUFREQ_LOAD_CHANGE, &govinfo);
-			
 		if (load > max_load)
 			max_load = load;
 	}
@@ -218,9 +187,6 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 	struct dbs_data *dbs_data;
 	struct od_cpu_dbs_info_s *od_dbs_info = NULL;
 	struct cs_cpu_dbs_info_s *cs_dbs_info = NULL;
-	struct ac_cpu_dbs_info_s *ac_dbs_info = NULL;
-	struct ac_ops *ac_ops = NULL;
-	struct ac_dbs_tuners *ac_tuners = NULL;
 	struct od_ops *od_ops = NULL;
 	struct od_dbs_tuners *od_tuners = NULL;
 	struct cs_dbs_tuners *cs_tuners = NULL;
@@ -329,12 +295,6 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 		cs_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
 		sampling_rate = cs_tuners->sampling_rate;
 		ignore_nice = cs_tuners->ignore_nice_load;
-	} else if (dbs_data->cdata->governor == GOV_ALUCARD) {
-		ac_tuners = dbs_data->tuners;
-		ac_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
-		sampling_rate = ac_tuners->sampling_rate;
-		ignore_nice = ac_tuners->ignore_nice_load;
-		ac_ops = dbs_data->cdata->gov_ops;
 	} else {
 		od_tuners = dbs_data->tuners;
 		od_dbs_info = dbs_data->cdata->get_cpu_dbs_info_s(cpu);
@@ -355,17 +315,10 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 			struct cpu_dbs_common_info *j_cdbs =
 				dbs_data->cdata->get_cpu_cdbs(j);
 
-			unsigned int prev_load;
 			j_cdbs->cpu = j;
 			j_cdbs->cur_policy = policy;
 			j_cdbs->prev_cpu_idle = get_cpu_idle_time(j,
 					       &j_cdbs->prev_cpu_wall, io_busy);
-						   
-			prev_load = (unsigned int)
-				(j_cdbs->prev_cpu_wall - j_cdbs->prev_cpu_idle);
-			j_cdbs->prev_load = 100 * prev_load /
-					(unsigned int) j_cdbs->prev_cpu_wall;
-					
 			if (ignore_nice)
 				j_cdbs->prev_cpu_nice =
 					kcpustat_cpu(j).cpustat[CPUTIME_NICE];

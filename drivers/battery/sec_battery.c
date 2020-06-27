@@ -6565,6 +6565,9 @@ static int sec_battery_probe(struct platform_device *pdev)
 		wake_lock(&battery->lpm_wake_lock);
 	}
 #endif
+	
+	charger_control_init(battery);
+	
 	return 0;
 
 

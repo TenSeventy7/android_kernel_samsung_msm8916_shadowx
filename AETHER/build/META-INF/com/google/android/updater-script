@@ -1,11 +1,8 @@
 #--INFORMATION
-ui_print("               _        _              ");
-ui_print("       _______| |____  / |_________    ");
-ui_print("      / |  ____  __/|  |  ________/    ");
-ui_print("     / /| |__ | | | |__| |__| |_| |    ");
-ui_print("    / /_|  __|| |_|  __   __|    _/    ");
-ui_print("   / ___| |___|   / |  | |__| |\ \     ");
-ui_print("  /_/   |______\_/|_/  /_____\| \_\    ");
+ui_print("                                       ");
+ui_print("      \          |    |                ");
+ui_print("     _ \    -_)   _|    \    -_)   _|  ");
+ui_print("   _/  _\ \___| \__| _| _| \___| _|    ");
 ui_print("                                       ");
 ui_print("        AetherAura Build Script        ");
 ui_print("         Powered by AetherAura         ");

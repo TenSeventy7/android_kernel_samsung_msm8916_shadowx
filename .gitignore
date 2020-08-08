@@ -10,6 +10,19 @@
 *.img
 /output
 
+/out
+
+ArKernel*.zip
+/anykernel/zImage
+/anykernel/Image.gz-dtb
+/anykernel/device.ark.sh
+anykernel/modules/system/lib/modules/*.ko
+anykernel/modules/system/lib/modules/pronto/*.ko
+
+!.supported-devices
+!anykernel/.*
+!tools/ak/.*
+
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source

@@ -116,7 +116,7 @@ api_variant_check() {
 }
 
 define_variant() {
-	DEVICE_VARIANT=msm8916_sec_${DEVICE_BUILD}_eur
+	DEVICE_VARIANT=msm8916_sec_${DEVICE_BUILD}
 	VARIANT_DEFCONFIG=${DEVICE_VARIANT}_defconfig
 	CHECK_DEFCONFIG=${VARIANT_DEFCONFIG}
 	check_defconfig

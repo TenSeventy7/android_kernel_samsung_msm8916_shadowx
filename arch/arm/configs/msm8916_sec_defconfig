@@ -1,3 +1,7 @@
+
+# Config local version
+CONFIG_LOCALVERSION="-staging"
+
 # Support XZ KERNEL Compress
 CONFIG_KERNEL_XZ=y
 # CONFIG_KERNEL_LZ4 is not set

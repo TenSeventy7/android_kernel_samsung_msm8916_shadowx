@@ -1,0 +1,26 @@
+sudo: required
+language: cpp
+compiler: gcc
+dist: bionic
+
+before_install:
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+  - sudo apt-get install -y build-essential kernel-package bzip2 ccache
+
+install:
+  # Fix libmpfr4 issue on Ubuntu Bionic and above
+  - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+
+  # Install UBERTC 4.8 toolchain
+  - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git arm-eabi-4.8-ubertc
+
+  - export ARCH=arm
+  - export SUBARCH=arm
+  - export PATH="${TOOLCHAIN}/bin/:$PATH"
+
+script: 
+  - ./build-ci
+
+before_deploy:
+  - ls ./releases

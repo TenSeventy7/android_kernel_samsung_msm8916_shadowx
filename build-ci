@@ -27,7 +27,6 @@ DTBTOOL=$(pwd)/tools/dtbTool
 DEVICE_BUILD=`echo $1 | tr 'A-Z' 'a-z'`
 CONFIG_DIR=$(pwd)/arch/arm/configs
 OUTPUT_DIR=$(pwd)/output
-DEIVCE_OUTPUT_DIR=${OUTPUT_DIR}/${DEVICE_BUILD}
 BUILDDATE=$(date +%s)
 
 FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_${BUILDDATE}.zip
@@ -64,6 +63,7 @@ define_variant() {
 	DEVICE_VARIANT=msm8916_sec_${DEVICE_BUILD}
 	VARIANT_DEFCONFIG=${DEVICE_VARIANT}_defconfig
 
+	DEIVCE_OUTPUT_DIR=${OUTPUT_DIR}/${DEVICE_BUILD}
 	FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_${BUILDDATE}.zip
 
 	make_output

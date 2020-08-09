@@ -14,7 +14,8 @@ install:
   - sudo ./ci-fix.sh
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
   - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git arm-eabi-4.8-ubertc
-  - export PATH="${TOOLCHAIN}/bin/:$PATH"
+  - export PATH="./arm-eabi-4.8-ubertc/bin/:$PATH"
+  - export CROSS_COMPILE=./arm-eabi-4.8-ubertc/bin/arm-eabi-
 
 script:
   - export KBUILD_BUILD_USER="Clembot";

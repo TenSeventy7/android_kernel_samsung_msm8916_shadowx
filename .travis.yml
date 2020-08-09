@@ -11,7 +11,7 @@ before_install:
 install:
   - sudo apt-get install -qq g++-7 
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
-  - sudo ci-fix.sh
+  - sudo ./ci-fix.sh
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
   - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git arm-eabi-4.8-ubertc
   - export PATH="${TOOLCHAIN}/bin/:$PATH"

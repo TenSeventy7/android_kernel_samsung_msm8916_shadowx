@@ -72,7 +72,7 @@ define_variant() {
 }
 
 build_dtb() {
-	./tools/dtbTool -o ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img -s 2048 -p ${DEIVCE_OUTPUT_DIR}/scripts/dtc/ ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dts/
+	$(pwd)/tools/dtbTool -o ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img -s 2048 -p ${DEIVCE_OUTPUT_DIR}/scripts/dtc/ ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dts/
 }
 
 build_kernel() {
@@ -83,26 +83,25 @@ build_kernel() {
 }
 
 ak_compose_manifest() {
-	MANIFEST_TOP=`cat ../tools/ak/.manifest-top`
-	MANIFEST_BOTTOM=`cat ../tools/ak/.manifest-bottom`
+	MANIFEST_TOP=`cat $(pwd)/tools/ak/.manifest-top`
+	MANIFEST_BOTTOM=`cat $(pwd)/tools/ak/.manifest-bottom`
 
-	touch ./device.ark.sh
-	echo "${MANIFEST_TOP}" > ./device.ark.sh
-	echo "device.name1=${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name2=lineage_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name3=dot_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name4=aosp_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name5=pa_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name6=fortuna3g" >> ./device.ark.sh
-	echo ${MANIFEST_BOTTOM} >> ./device.ark.sh
+	touch $(pwd)/anykernel/device.ark.sh
+	echo "${MANIFEST_TOP}" > $(pwd)/anykernel/device.ark.sh
+	echo "device.name1=${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name2=lineage_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name6=fortuna3g" >> $(pwd)/anykernel/device.ark.sh
+	echo ${MANIFEST_BOTTOM} >> $(pwd)/anykernel/device.ark.sh
 }
 
 build_zip() {
 	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
 	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
-	cd $(pwd)/anykernel
 	ak_compose_manifest
-	zip -9 -r ./${FILE_OUTPUT} ./*
+	zip -9 -r $(pwd)/anykernel/${FILE_OUTPUT}  $(pwd)/anykernel/*
 	cd ../
 	mv $(pwd)/anykernel/${FILE_OUTPUT} $(pwd)/releases/${FILE_OUTPUT}
 }

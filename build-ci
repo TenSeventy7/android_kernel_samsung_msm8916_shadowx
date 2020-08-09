@@ -119,9 +119,3 @@ build_kernel_full
 
 DEVICE_BUILD=fortuna3g
 build_kernel_full
-
-DEVICE_BUILD=fortuna3gdtv
-build_kernel_full
-
-DEVICE_BUILD=fortunaltedx
-build_kernel_full

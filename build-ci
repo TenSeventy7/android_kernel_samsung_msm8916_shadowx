@@ -102,7 +102,6 @@ build_zip() {
 	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
 	ak_compose_manifest
 	zip -9 -r $(pwd)/anykernel/${FILE_OUTPUT}  $(pwd)/anykernel/*
-	cd ../
 	mv $(pwd)/anykernel/${FILE_OUTPUT} $(pwd)/releases/${FILE_OUTPUT}
 }
 

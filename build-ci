@@ -112,6 +112,8 @@ build_kernel_full() {
 	build_zip
 }
 
+mkdir $(pwd)/releases
+
 DEVICE_BUILD=fortunave3g
 build_kernel_full
 

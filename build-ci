@@ -98,8 +98,9 @@ build_zip() {
 	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
 	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
 	ak_compose_manifest
-	zip -9 -r $(pwd)/anykernel/${FILE_OUTPUT}  $(pwd)/anykernel/*
-	mv $(pwd)/anykernel/${FILE_OUTPUT} $(pwd)/releases/${FILE_OUTPUT}
+	cd $(pwd)/anykernel
+	zip -9 -r ./${FILE_OUTPUT} ./*
+	mv ./${FILE_OUTPUT} ./../releases/${FILE_OUTPUT}
 }
 
 build_kernel_full() {

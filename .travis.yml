@@ -3,6 +3,12 @@ language: cpp
 compiler: gcc
 dist: bionic
 
+branches:
+  only:
+  - fortuna-staging
+  except:
+  - /^ci_build/
+
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
@@ -26,6 +32,13 @@ script:
 
 before_deploy:
   - ls ./releases
+
+  # Set up git user name and tag this commit
+  - git config --local user.name "John Vincent"
+  - git config --local user.email "28522823+TenSeventy7@users.noreply.github.com"
+  - export TRAVIS_TAG=ci_build-$(date +'%Y%m%d%H%M%S')
+  - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
+  - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
 
 deploy:
   provider: releases

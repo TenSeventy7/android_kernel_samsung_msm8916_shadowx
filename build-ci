@@ -39,6 +39,11 @@ exit_script() {
 	kill -INT $$
 }
 
+fail_script() {
+	script_echo "Files missing. Please fix."
+	exit 1
+}
+
 make_output() {
 	if [[ ! -d "${OUTPUT_DIR}" ]]
 	then
@@ -95,12 +100,24 @@ ak_compose_manifest() {
 }
 
 build_zip() {
-	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
-	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
+	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage" ]]
+	then
+	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
+	else
+	fi
+
+	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img" ]]
+	then
+		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
+	else
+	fi
+	
+	
 	ak_compose_manifest
 	cd $(pwd)/anykernel
 	zip -9 -r ./${FILE_OUTPUT} ./*
 	mv ./${FILE_OUTPUT} ./../releases/${FILE_OUTPUT}
+	cd ./../
 }
 
 build_kernel_full() {

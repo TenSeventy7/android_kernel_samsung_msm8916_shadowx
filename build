@@ -28,13 +28,15 @@ TOOLCHAIN_EXT=$(pwd)/toolchain/arm-eabi-4.8-ubertc
 DTBTOOL=$(pwd)/tools/dtbTool
 
 DEVICE_BUILD=`echo $1 | tr 'A-Z' 'a-z'`
+OPTIONS=`echo ${2} ${3} ${4} ${5} ${6} ${7} ${8} | tr 'A-Z' 'a-z'`
+
 CONFIG_DIR=$(pwd)/arch/arm/configs
 OUTPUT_DIR=$(pwd)/output
 DEIVCE_OUTPUT_DIR=${OUTPUT_DIR}/${DEVICE_BUILD}
 BUILDDATE=$(date +%s)
 DEVICES_SUPPORTED=`cat $(pwd)/.supported-devices`
 
-FILE_OUTPUT=Galahad_${DEVICE_BUILD}_${BUILDDATE}.zip
+FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_user_${BUILDDATE}.zip
 
 script_echo() {
 	echo "  $1"
@@ -79,10 +81,15 @@ make_output() {
 	then
 	    mkdir ${DEIVCE_OUTPUT_DIR}
 	fi
+
+	if [[ ! -d "$(pwd)/releases" ]]
+	then
+	    mkdir $(pwd)/releases
+	fi
 }
 
 show_usage() {
-	script_echo "USAGE: ./build [device] [22/23/25] [ci]"
+	script_echo "USAGE: ./build [device]"
 	script_echo " "
 	script_echo "Currently supported devices:"
 	echo "${DEVICES_SUPPORTED}"
@@ -102,26 +109,13 @@ check_defconfig() {
 	fi
 }
 
-api_variant_check() {
-	if [ "$API_DEFCONFIG" == "NONE" ]; then
-		script_echo "E: API Variant not defined!"
-		show_usage
-	elif [ "$API_DEFCONFIG" == "INVALID" ]; then
-		script_echo "E: API invalid!"
-		show_usage
-	else
-		CHECK_DEFCONFIG=${API_DEFCONFIG}
-		check_defconfig
-	fi
-}
-
 define_variant() {
 	DEVICE_VARIANT=msm8916_sec_${DEVICE_BUILD}
 	VARIANT_DEFCONFIG=${DEVICE_VARIANT}_defconfig
 	CHECK_DEFCONFIG=${VARIANT_DEFCONFIG}
 	check_defconfig
 
-	FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_${BUILDDATE}.zip
+	FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_user_${BUILDDATE}.zip
 
 	make_output
 	make -C $(pwd) O=${DEIVCE_OUTPUT_DIR} VARIANT_DEFCONFIG=$VARIANT_DEFCONFIG msm8916_sec_defconfig SELINUX_DEFCONFIG=selinux_defconfig
@@ -129,7 +123,7 @@ define_variant() {
 }
 
 build_dtb() {
-	./tools/dtbTool -o ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img -s 2048 -p ${DEIVCE_OUTPUT_DIR}/scripts/dtc/ ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dts/
+	$(pwd)/tools/dtbTool -o ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img -s 2048 -p ${DEIVCE_OUTPUT_DIR}/scripts/dtc/ ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dts/
 }
 
 build_kernel() {
@@ -140,46 +134,61 @@ build_kernel() {
 }
 
 ak_compose_manifest() {
-	MANIFEST_TOP=`cat ../tools/ak/.manifest-top`
-	MANIFEST_BOTTOM=`cat ../tools/ak/.manifest-bottom`
+	MANIFEST_TOP=`cat $(pwd)/tools/ak/.manifest-top`
+	MANIFEST_BOTTOM=`cat $(pwd)/tools/ak/.manifest-bottom`
 
-	touch ./device.ark.sh
-	echo "${MANIFEST_TOP}" > ./device.ark.sh
-	echo "device.name1=${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name2=lineage_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name3=dot_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name4=aosp_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name5=pa_${DEVICE_BUILD}" >> ./device.ark.sh
-	echo "device.name6=fortuna3g" >> ./device.ark.sh
-	echo ${MANIFEST_BOTTOM} >> ./device.ark.sh
+	touch $(pwd)/anykernel/device.ark.sh
+	echo "${MANIFEST_TOP}" > $(pwd)/anykernel/device.ark.sh
+	echo "device.name1=${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name2=lineage_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
+	echo "device.name6=fortuna3g" >> $(pwd)/anykernel/device.ark.sh
+	echo ${MANIFEST_BOTTOM} >> $(pwd)/anykernel/device.ark.sh
 }
 
 build_zip() {
 	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
-	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
-	cd $(pwd)/anykernel
+
+	if [ "$OPTIONS" == *"-d"* ]; then
+		sleep 1
+	else
+		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
+	fi
+	
 	ak_compose_manifest
+	cd $(pwd)/anykernel
 	zip -9 -r ./${FILE_OUTPUT} ./*
-	cd ../
-	mv $(pwd)/anykernel/${FILE_OUTPUT} $(pwd)/${FILE_OUTPUT}
+	mv ./${FILE_OUTPUT} ./../releases/${FILE_OUTPUT}
 }
 
 build_kernel_full() {
+	define_variant
 	build_kernel
-	build_dtb
+
+	if [ "$OPTIONS" == *"-d"* ]; then
+		sleep 1
+
+		# Remove existing DTB on anykernel dir
+		rm -f $(pwd)/anykernel/Image.gz-dtb
+	else
+		build_dtb
+	fi
+
 	build_zip
 
 	script_echo "I: Build is done!"
 	script_echo "I: Install ZIP is located at"
-	script_echo "	$(pwd)/${FILE_OUTPUT}"
+	script_echo "	$(pwd)/releases/${FILE_OUTPUT}"
 }
 
 
 script_echo ''
 script_echo '====================================================='
-script_echo '                   ArKernel Builder                  '
+script_echo '            ArKernel Builder - ShadowX Core          '
 script_echo '          by TenSeventy7 - Licensed in GPLv3         '
-script_echo '        Updated Aug 8 2020 for Project ShadowX       '
+script_echo '        Updated Aug 10 2020 for Project ShadowX      '
 script_echo '====================================================='
 script_echo ''
 
@@ -187,7 +196,6 @@ verify_toolchain
 
 if [ ! "$1" == "" ]; then
 	sleep 5
-	define_variant
 	build_kernel_full
 else
 	script_echo "E: Defconfig not defined!"

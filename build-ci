@@ -104,12 +104,14 @@ build_zip() {
 	then
 	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
 	else
+		fail_script
 	fi
 
 	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img" ]]
 	then
 		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
 	else
+		fail_script
 	fi
 	
 	

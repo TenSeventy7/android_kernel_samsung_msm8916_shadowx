@@ -27,7 +27,7 @@ DTBTOOL=$(pwd)/tools/dtbTool
 DEVICE_BUILD=`echo $1 | tr 'A-Z' 'a-z'`
 CONFIG_DIR=$(pwd)/arch/arm/configs
 OUTPUT_DIR=$(pwd)/output
-BUILDDATE=$(date +%s)
+BUILDDATE=$(date +'%Y%m%d%H%M%S')
 
 FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_ci_${BUILDDATE}.zip
 
@@ -59,6 +59,16 @@ make_output() {
 	then
 	    mkdir $(pwd)/releases
 	fi
+
+	if [[ ! -d "$(pwd)/.tmp" ]]
+	then
+	    mkdir $(pwd)/.tmp
+	fi
+
+	if [[ ! -d "$(pwd)/.tmp/${DEVICE_BUILD}" ]]
+	then
+	    mkdir $(pwd)/.tmp/${DEVICE_BUILD}
+	fi
 }
 
 define_variant() {
@@ -79,47 +89,49 @@ build_dtb() {
 
 build_kernel() {
 	make -C $(pwd) O=${DEIVCE_OUTPUT_DIR}
-	cp `find ${DEIVCE_OUTPUT_DIR} -iname *.ko` $(pwd)/anykernel/modules/system/lib/modules -rf
-	mkdir $(pwd)/anykernel/modules/system/lib/modules/pronto
-	cp $(pwd)/anykernel/modules/system/lib/modules/wlan.ko $(pwd)/anykernel/modules/system/lib/modules/pronto/pronto_wlan.ko -f
+	cp `find ${DEIVCE_OUTPUT_DIR} -iname *.ko` $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules -rf
+	mkdir $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/pronto
+	cp $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/wlan.ko $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/pronto/pronto_wlan.ko -f
 }
 
 ak_compose_manifest() {
 	MANIFEST_TOP=`cat $(pwd)/tools/ak/.manifest-top`
 	MANIFEST_BOTTOM=`cat $(pwd)/tools/ak/.manifest-bottom`
 
-	touch $(pwd)/anykernel/device.ark.sh
-	echo "${MANIFEST_TOP}" > $(pwd)/anykernel/device.ark.sh
-	echo "device.name1=${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name2=lineage_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name6=fortuna3g" >> $(pwd)/anykernel/device.ark.sh
-	echo ${MANIFEST_BOTTOM} >> $(pwd)/anykernel/device.ark.sh
+	touch $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "${MANIFEST_TOP}" > $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name1=${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name2=lineage_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name6=fortuna3g" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo ${MANIFEST_BOTTOM} >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
 }
 
 build_zip() {
+	cp $(pwd)/anykernel $(pwd)/.tmp/${DEVICE_BUILD}/ -rf
+
 	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage" ]]
 	then
-	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
+	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/zImage -f
 	else
 		fail_script
 	fi
 
 	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img" ]]
 	then
-		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
+		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/Image.gz-dtb -f
 	else
 		fail_script
 	fi
 	
 	
 	ak_compose_manifest
-	cd $(pwd)/anykernel
+	cd $(pwd)/.tmp/${DEVICE_BUILD}/anykernel
 	zip -9 -r ./${FILE_OUTPUT} ./*
-	mv ./${FILE_OUTPUT} ./../releases/${FILE_OUTPUT}
-	cd ./../
+	mv ./${FILE_OUTPUT} ./../../../releases/${FILE_OUTPUT}
+	cd ./../../../
 }
 
 build_kernel_full() {
@@ -129,8 +141,4 @@ build_kernel_full() {
 	build_zip
 }
 
-DEVICE_BUILD=fortunave3g
-build_kernel_full
-
-DEVICE_BUILD=fortuna3g
 build_kernel_full

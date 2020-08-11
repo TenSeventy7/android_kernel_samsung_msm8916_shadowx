@@ -72,6 +72,21 @@ config ANDROID_TIMED_GPIO
 	depends on GPIOLIB && ANDROID_TIMED_OUTPUT
 	default n
 
+config ANDROID_LOW_MEMORY_KILLER
+	bool "Android Low Memory Killer"
+	default N
+	---help---
+	  Registers processes to be killed when memory is low
+
+config ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES
+	bool "Android Low Memory Killer: detect oom_adj values"
+	depends on ANDROID_LOW_MEMORY_KILLER
+	default y
+	---help---
+	  Detect oom_adj values written to
+	  /sys/module/lowmemorykiller/parameters/adj and convert them
+	  to oom_score_adj values.
+
 config ANDROID_SIMPLE_LMK
 	bool "Simple Android Low Memory Killer"
 	depends on !ANDROID_LOW_MEMORY_KILLER && !MEMCG
@@ -104,21 +119,6 @@ config ANDROID_SIMPLE_LMK_TIMEOUT_MSEC
 	  waiting and make itself available to kill more processes.
 
 endif
-
-config ANDROID_LOW_MEMORY_KILLER
-	bool "Android Low Memory Killer"
-	default N
-	---help---
-	  Registers processes to be killed when memory is low
-
-config ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES
-	bool "Android Low Memory Killer: detect oom_adj values"
-	depends on ANDROID_LOW_MEMORY_KILLER
-	default y
-	---help---
-	  Detect oom_adj values written to
-	  /sys/module/lowmemorykiller/parameters/adj and convert them
-	  to oom_score_adj values.
 
 config SEC_OOM_KILLER
 	bool "Android OOM Killer"

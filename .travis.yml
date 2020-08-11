@@ -36,7 +36,7 @@ before_deploy:
   # Set up git user name and tag this commit
   - git config --local user.name "John Vincent"
   - git config --local user.email "28522823+TenSeventy7@users.noreply.github.com"
-  - export TRAVIS_TAG=ci_build-$(date +'%Y%m%d%H%M%S')
+  - export TRAVIS_TAG=ci_build-$DEVICE-$(date +'%Y%m%d%H%M%S')
   - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
   - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
 

@@ -14,23 +14,24 @@ env:
       - DEVICE="fortunave3g"
       - DEVICE="fortuna3g"
 
-before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-  - sudo apt-get install -y build-essential kernel-package bzip2 ccache libc6-dev-i386 lib32stdc++6
-
-install:
-  - sudo apt-get install -qq g++-7 
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
-  - sudo ./ci-fix.sh
-  - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
-  - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git $HOME/arm-eabi-4.8-ubertc
-  - export PATH="$HOME/arm-eabi-4.8-ubertc/bin/:$PATH"
-  - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
-
 jobs:
   include:
-    - script:
+    - stage: Kernel build
+      before_install:
+        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        - sudo apt-get update -qq
+        - sudo apt-get install -y build-essential kernel-package bzip2 ccache libc6-dev-i386 lib32stdc++6
+
+      install:
+        - sudo apt-get install -qq g++-7 
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
+        - sudo ./ci-fix.sh
+        - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+        - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git $HOME/arm-eabi-4.8-ubertc
+        - export PATH="$HOME/arm-eabi-4.8-ubertc/bin/:$PATH"
+        - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
+
+      script:
         - export KBUILD_BUILD_USER="Clembot";
         - export KBUILD_BUILD_HOST="Lumiose-CI";
         - export ARCH=arm
@@ -45,6 +46,7 @@ jobs:
         - export TRAVIS_TAG=ci_build-$(date +'%Y%m%d%H%M%S')
         - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
         - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
+        
       deploy:
         provider: releases
         api_key:

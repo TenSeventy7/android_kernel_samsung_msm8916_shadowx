@@ -9,52 +9,51 @@ branches:
   except:
   - /^ci_build/
 
-before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-  - sudo apt-get install -y build-essential kernel-package bzip2 ccache libc6-dev-i386 lib32stdc++6
-
-install:
-  - sudo apt-get install -qq g++-7 
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
-  - sudo ./ci-fix.sh
-  - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
-  - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git $HOME/arm-eabi-4.8-ubertc
-  - export PATH="$HOME/arm-eabi-4.8-ubertc/bin/:$PATH"
-  - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
-
 env:
-  global:
-    - KBUILD_BUILD_USER="Clembot"
-    - KBUILD_BUILD_HOST="Lumiose-CI"
-    - ARCH=arm
-    - SUBARCH=arm
     matrix:
       - DEVICE="fortunave3g"
       - DEVICE="fortuna3g"
-    jobs:
-      include:
-        - stage: Kernel build
-          script:
-            - "./build-ci $DEVICE"
 
-        - stage: GitHub Release
-          script: skip
-          before_deploy:
-            - ls ./releases
-            - git config --local user.name "John Vincent"
-            - git config --local user.email "28522823+TenSeventy7@users.noreply.github.com"
-            - export TRAVIS_TAG=ci_build-$(date +'%Y%m%d%H%M%S')
-            - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
-            - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
+jobs:
+  include:
+    - stage: Kernel build
+      before_install:
+        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        - sudo apt-get update -qq
+        - sudo apt-get install -y build-essential kernel-package bzip2 ccache libc6-dev-i386 lib32stdc++6
 
-          deploy:
-            provider: releases
-            api_key:
-              secure: M48ANgMxamoisGJZt7gsMs0R8TF+RpfCfQ+VKvFr9Ye5MPCs/azd1iWcOmKWBRVT/KEg1TK6APBZ5DZlnUlYvSwvvQ8u5KckNw5E4igyPDLaTJlghZo7TRHxMB1tLOH15ZJjjAK3zmTGphh4aNLrnukfPmH0tW6r2RRxYMF7anNWPf6pxUZ0ApVZoklnahV7dsHRL6dudZJjmolwPSoiM5IENyqs+3sUvrCfNt9xYlFQJAykPQ032hipC76eT8QJhowQ7i61OXV/UXQ0N/wkAeIa/RYPYrMqYjxjjMYR719c/DBoUCHH9CUi+okkSqV/fXjktRDBsydHCLDjXAKqQ8wpQCTlUCwzyQEEimwSImvURGqL1IkP+7V2750onuGuETb3d8DAWckFmBq8chGWBDPsSlAsXqUxz5vYYRa60FRGsPOV+dnNPEoIJkJkkHnSLPlCCNzGR2a9jP1eytpxh6pgLs19N872xRwnTMyVa03QruEyApeTVR6g2ERQMWrk26Oz81EWu3HGlvGBYN8gVk1fQRWjA2er8Rz4zuye+QtNnppunmgs6Ks5rIy+MxqYQL94Ksnsog8sHgiF2eWd8WZJbP+Migxsdp6SaIFHkk+utbYYkUaijIn5iDgrY+EM9u0ZEljTJrX47Sjo7SuBjCgISiDRHiWHvwJCLFL+knQ=
-            file_glob: true
-            file: releases/*
-            on:
-              repo: TenSeventy7/android_kernel_samsung_msm8916_shadowx
-              branch: fortuna-staging
-            skip_cleanup: 'true'
+      install:
+        - sudo apt-get install -qq g++-7 
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
+        - sudo ./ci-fix.sh
+        - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+        - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git $HOME/arm-eabi-4.8-ubertc
+        - export PATH="$HOME/arm-eabi-4.8-ubertc/bin/:$PATH"
+        - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
+
+      script:
+        - export KBUILD_BUILD_USER="Clembot";
+        - export KBUILD_BUILD_HOST="Lumiose-CI";
+        - export ARCH=arm
+        - export SUBARCH=arm
+        - "./build-ci $DEVICE"
+    - stage: GitHub Release
+      script: skip
+      before_deploy:
+        - ls ./releases
+        - git config --local user.name "John Vincent"
+        - git config --local user.email "28522823+TenSeventy7@users.noreply.github.com"
+        - export TRAVIS_TAG=ci_build-$(date +'%Y%m%d%H%M%S')
+        - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
+        - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
+        
+      deploy:
+        provider: releases
+        api_key:
+          secure: M48ANgMxamoisGJZt7gsMs0R8TF+RpfCfQ+VKvFr9Ye5MPCs/azd1iWcOmKWBRVT/KEg1TK6APBZ5DZlnUlYvSwvvQ8u5KckNw5E4igyPDLaTJlghZo7TRHxMB1tLOH15ZJjjAK3zmTGphh4aNLrnukfPmH0tW6r2RRxYMF7anNWPf6pxUZ0ApVZoklnahV7dsHRL6dudZJjmolwPSoiM5IENyqs+3sUvrCfNt9xYlFQJAykPQ032hipC76eT8QJhowQ7i61OXV/UXQ0N/wkAeIa/RYPYrMqYjxjjMYR719c/DBoUCHH9CUi+okkSqV/fXjktRDBsydHCLDjXAKqQ8wpQCTlUCwzyQEEimwSImvURGqL1IkP+7V2750onuGuETb3d8DAWckFmBq8chGWBDPsSlAsXqUxz5vYYRa60FRGsPOV+dnNPEoIJkJkkHnSLPlCCNzGR2a9jP1eytpxh6pgLs19N872xRwnTMyVa03QruEyApeTVR6g2ERQMWrk26Oz81EWu3HGlvGBYN8gVk1fQRWjA2er8Rz4zuye+QtNnppunmgs6Ks5rIy+MxqYQL94Ksnsog8sHgiF2eWd8WZJbP+Migxsdp6SaIFHkk+utbYYkUaijIn5iDgrY+EM9u0ZEljTJrX47Sjo7SuBjCgISiDRHiWHvwJCLFL+knQ=
+        file_glob: true
+        file: releases/*
+        on:
+          repo: TenSeventy7/android_kernel_samsung_msm8916_shadowx
+          branch: fortuna-staging
+        skip_cleanup: 'true'

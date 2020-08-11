@@ -27,6 +27,8 @@ env:
     matrix:
       - DEVICE="fortunave3g"
       - DEVICE="fortuna3g"
+      - DEVICE="fortunalte"
+      - DEVICE="fortuna3gdtv"
 
 script:
   - export KBUILD_BUILD_USER="Clembot";

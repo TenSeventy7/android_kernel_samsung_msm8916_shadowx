@@ -23,12 +23,19 @@ install:
   - export PATH="$HOME/arm-eabi-4.8-ubertc/bin/:$PATH"
   - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
 
+env:
+    matrix:
+      - DEVICE="fortunave3g"
+      - DEVICE="fortuna3g"
+      - DEVICE="fortunalte"
+      - DEVICE="fortuna3gdtv"
+
 script:
   - export KBUILD_BUILD_USER="Clembot";
   - export KBUILD_BUILD_HOST="Lumiose-CI";
   - export ARCH=arm
   - export SUBARCH=arm
-  - "./build-ci"
+  - "./build-ci $DEVICE"
 
 before_deploy:
   - ls ./releases

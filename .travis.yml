@@ -27,7 +27,7 @@ env:
     matrix:
       - DEVICE="fortunave3g"
       - DEVICE="fortuna3g"
-      - DEVICE="fortunalte"
+      - DEVICE="fortunaltedx"
       - DEVICE="fortuna3gdtv"
 
 script:

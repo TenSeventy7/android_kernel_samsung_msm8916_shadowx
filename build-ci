@@ -89,6 +89,9 @@ build_dtb() {
 
 build_kernel() {
 	make -C $(pwd) O=${DEIVCE_OUTPUT_DIR}
+	
+	cp $(pwd)/anykernel $(pwd)/.tmp/${DEVICE_BUILD}/ -rf
+
 	cp `find ${DEIVCE_OUTPUT_DIR} -iname *.ko` $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules -rf
 	mkdir $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/pronto
 	cp $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/wlan.ko $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/pronto/pronto_wlan.ko -f
@@ -110,8 +113,6 @@ ak_compose_manifest() {
 }
 
 build_zip() {
-	cp $(pwd)/anykernel $(pwd)/.tmp/${DEVICE_BUILD}/ -rf
-
 	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage" ]]
 	then
 	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/zImage -f

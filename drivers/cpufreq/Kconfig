@@ -93,13 +93,6 @@ config CPU_FREQ_DEFAULT_GOV_CONSERVATIVEX
 	select CPU_FREQ_GOV_CONSERVATIVEX
 	help
 	  Use the CPUFreq governor 'conservativex' as default.
-
-config CPU_FREQ_DEFAULT_GOV_BLUACTIVE
-	bool "bluactive"
-	select CPU_FREQ_GOV_BLUACTIVE
-	help
-	Use the CPUFreq governor 'bluactive' as default.
-
 	 
 config CPU_FREQ_DEFAULT_GOV_PRESERVATIVE
 	bool "preservative"
@@ -431,12 +424,6 @@ config CPU_FREQ_GOV_CONSERVATIVEX
 	depends on CPU_FREQ
 	help
 	  'conservativex' - less aggressive version of conservative
-
-config CPU_FREQ_GOV_BLUACTIVE
-	tristate "'bluactive' cpufreq governor"
-	depends on CPU_FREQ
-	help
-	  'bluactive' - less aggressive version of conservative
 
 config CPU_FREQ_GOV_PRESERVATIVE
 	tristate "'preservative' cpufreq governor"

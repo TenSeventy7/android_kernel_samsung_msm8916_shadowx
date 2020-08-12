@@ -40,7 +40,7 @@ static struct delayed_work intelli_plug_boost;
 
 static struct workqueue_struct *intelliplug_wq;
 
-static __read_mostly bool enabled = true;
+static __read_mostly bool enabled = false;
 static __read_mostly bool touch_boost = false;
 static __read_mostly unsigned int nr_run_profile_sel = 0;
 

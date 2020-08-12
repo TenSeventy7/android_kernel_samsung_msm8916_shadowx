@@ -79,24 +79,27 @@ build_dtb() {
 
 build_kernel() {
 	make -C $(pwd) O=${DEIVCE_OUTPUT_DIR}
-	cp `find ${DEIVCE_OUTPUT_DIR} -iname *.ko` $(pwd)/anykernel/modules/system/lib/modules -rf
-	mkdir $(pwd)/anykernel/modules/system/lib/modules/pronto
-	cp $(pwd)/anykernel/modules/system/lib/modules/wlan.ko $(pwd)/anykernel/modules/system/lib/modules/pronto/pronto_wlan.ko -f
+	
+	cp $(pwd)/anykernel $(pwd)/.tmp/${DEVICE_BUILD}/ -rf
+
+	cp `find ${DEIVCE_OUTPUT_DIR} -iname *.ko` $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules -rf
+	mkdir $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/pronto
+	cp $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/wlan.ko $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/modules/system/lib/modules/pronto/pronto_wlan.ko -f
 }
 
 ak_compose_manifest() {
 	MANIFEST_TOP=`cat $(pwd)/tools/ak/.manifest-top`
 	MANIFEST_BOTTOM=`cat $(pwd)/tools/ak/.manifest-bottom`
 
-	touch $(pwd)/anykernel/device.ark.sh
-	echo "${MANIFEST_TOP}" > $(pwd)/anykernel/device.ark.sh
-	echo "device.name1=${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name2=lineage_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/anykernel/device.ark.sh
-	echo "device.name6=fortuna3g" >> $(pwd)/anykernel/device.ark.sh
-	echo ${MANIFEST_BOTTOM} >> $(pwd)/anykernel/device.ark.sh
+	touch $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "${MANIFEST_TOP}" > $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name1=${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name2=lineage_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name6=fortuna3g" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo ${MANIFEST_BOTTOM} >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
 }
 
 build_zip() {

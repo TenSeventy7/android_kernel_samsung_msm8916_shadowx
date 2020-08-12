@@ -1,6 +1,6 @@
-sudo: required
 language: cpp
 compiler: gcc
+os: linux
 dist: bionic
 
 branches:
@@ -24,7 +24,7 @@ install:
   - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
 
 env:
-    matrix:
+    jobs:
       - DEVICE="fortunave3g"
       - DEVICE="fortuna3g"
       - DEVICE="fortunaltedx"
@@ -43,6 +43,11 @@ before_deploy:
   # Set up git user name and tag this commit
   - git config --local user.name "John Vincent"
   - git config --local user.email "28522823+TenSeventy7@users.noreply.github.com"
+
+  # Remove exisitng tags so we keep latest
+  - git remote set-url origin https://TenSeventy7:$ENCK@github.com/TenSeventy7/android_kernel_samsung_msm8916_shadowx.git
+  - git tag | grep ci_build-$DEVICE | xargs -n 1 -I% git push origin :refs/tags/%
+
   - export TRAVIS_TAG=ci_build-$DEVICE-$(date +'%Y%m%d%H%M%S')
   - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
   - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
@@ -56,4 +61,4 @@ deploy:
   on:
     repo: TenSeventy7/android_kernel_samsung_msm8916_shadowx
     branch: fortuna-staging
-  skip_cleanup: 'true'
+  cleanup: 'false'

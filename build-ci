@@ -27,7 +27,7 @@ DTBTOOL=$(pwd)/tools/dtbTool
 DEVICE_BUILD=`echo $1 | tr 'A-Z' 'a-z'`
 CONFIG_DIR=$(pwd)/arch/arm/configs
 OUTPUT_DIR=$(pwd)/output
-BUILDDATE=$(date +%s)
+BUILDDATE=$(date +'%Y%m%d%H%M%S')
 
 FILE_OUTPUT=ArKernel_${DEVICE_BUILD}_ci_${BUILDDATE}.zip
 
@@ -58,6 +58,16 @@ make_output() {
 	if [[ ! -d "$(pwd)/releases" ]]
 	then
 	    mkdir $(pwd)/releases
+	fi
+
+	if [[ ! -d "$(pwd)/.tmp" ]]
+	then
+	    mkdir $(pwd)/.tmp
+	fi
+
+	if [[ ! -d "$(pwd)/.tmp/${DEVICE_BUILD}" ]]
+	then
+	    mkdir $(pwd)/.tmp/${DEVICE_BUILD}
 	fi
 }
 
@@ -105,24 +115,24 @@ ak_compose_manifest() {
 build_zip() {
 	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage" ]]
 	then
-	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/anykernel/zImage -f
+	   	mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/zImage $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/zImage -f
 	else
 		fail_script
 	fi
 
 	if [[ -e "${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img" ]]
 	then
-		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/anykernel/Image.gz-dtb -f
+		mv ${DEIVCE_OUTPUT_DIR}/arch/arm/boot/dt.img $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/Image.gz-dtb -f
 	else
 		fail_script
 	fi
 	
 	
 	ak_compose_manifest
-	cd $(pwd)/anykernel
+	cd $(pwd)/.tmp/${DEVICE_BUILD}/anykernel
 	zip -9 -r ./${FILE_OUTPUT} ./*
-	mv ./${FILE_OUTPUT} ./../releases/${FILE_OUTPUT}
-	cd ./../
+	mv ./${FILE_OUTPUT} ./../../../releases/${FILE_OUTPUT}
+	cd ./../../../
 }
 
 build_kernel_full() {
@@ -132,8 +142,4 @@ build_kernel_full() {
 	build_zip
 }
 
-DEVICE_BUILD=fortunave3g
-build_kernel_full
-
-DEVICE_BUILD=fortuna3g
 build_kernel_full

@@ -61,4 +61,4 @@ deploy:
   on:
     repo: TenSeventy7/android_kernel_samsung_msm8916_shadowx
     branch: fortuna-staging
-  cleanup: 'false'
+  skip_cleanup: 'true'

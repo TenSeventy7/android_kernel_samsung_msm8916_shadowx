@@ -66,7 +66,7 @@ config SEC_JIG_LIMIT
 choice
 	prompt "Default CPUFreq governor"
 	default CPU_FREQ_DEFAULT_GOV_USERSPACE if ARM_SA1100_CPUFREQ || ARM_SA1110_CPUFREQ
-	default CPU_FREQ_DEFAULT_GOV_BLUACTIVE
+	default CPU_FREQ_DEFAULT_GOV_BLU_ACTIVE
 	help
 	  This option sets which CPUFreq governor shall be loaded at
 	  startup. If in doubt, select 'performance'.

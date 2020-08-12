@@ -357,16 +357,7 @@ config CPU_FREQ_GOV_CONSERVATIVE
 	  For details, take a look at linux/Documentation/cpu-freq.
 
 	  If in doubt, say N.
-
-config CPU_FREQ_GOV_RELAXED
-	tristate "'relaxed' cpufreq governor"
-	depends on CPU_FREQ
-	select CPU_FREQ_GOV_COMMON
-	default y
-	help
-	  'relaxed' - similar to 'conservative', but optimized for devices
-	  that go into suspended or display off states often.
-
+	  
 config CPU_FREQ_GOV_BLU_ACTIVE
 	tristate "'blu_active' cpufreq policy governor"
 	help

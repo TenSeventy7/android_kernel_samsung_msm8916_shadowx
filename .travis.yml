@@ -46,6 +46,7 @@ env:
 script:
   - export ARCH=arm
   - export SUBARCH=arm
+  - echo "Building $TRAVIS_BUILD_NUMBER, $DEVICE variant - $KBUILD_BUILD_USER on $KBUILD_BUILD_HOST"
   - "./build-ci $DEVICE"
 
 before_deploy:

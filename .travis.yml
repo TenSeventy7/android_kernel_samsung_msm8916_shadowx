@@ -44,8 +44,6 @@ env:
       - DEVICE="fortuna3gdtv"
 
 script:
-  - export KBUILD_BUILD_USER="Clembot";
-  - export KBUILD_BUILD_HOST="Lumiose-CI";
   - export ARCH=arm
   - export SUBARCH=arm
   - "./build-ci $DEVICE"

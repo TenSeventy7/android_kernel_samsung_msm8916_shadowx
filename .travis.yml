@@ -6,6 +6,7 @@ dist: bionic
 branches:
   only:
   - fortuna-staging
+  - grandmax3g-staging
   - fortuna-stable
   except:
   - /^ci_staging/

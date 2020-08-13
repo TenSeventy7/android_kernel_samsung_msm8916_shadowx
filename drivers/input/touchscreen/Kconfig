@@ -1210,6 +1210,7 @@ source "drivers/input/touchscreen/zinitix_bt532/Kconfig"
 source "drivers/input/touchscreen/zinitix_zt7538/Kconfig"
 source "drivers/input/touchscreen/imagis_30xxc/Kconfig"
 source "drivers/input/touchscreen/imagis_30xxc_cmcs/Kconfig"
+source "drivers/input/touchscreen/imagis_o1/Kconfig"
 source "drivers/input/touchscreen/sec_ts/Kconfig"
 endif
 source "drivers/input/touchscreen/zinitix_j1/Kconfig"

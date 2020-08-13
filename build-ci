@@ -108,7 +108,7 @@ ak_compose_manifest() {
 	echo "device.name3=dot_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
 	echo "device.name4=aosp_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
 	echo "device.name5=pa_${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
-	echo "device.name6=fortuna3g" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
+	echo "device.name6=${DEVICE_BUILD}" >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
 	echo ${MANIFEST_BOTTOM} >> $(pwd)/.tmp/${DEVICE_BUILD}/anykernel/device.ark.sh
 }
 

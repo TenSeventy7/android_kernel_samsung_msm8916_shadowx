@@ -24,7 +24,7 @@
 # Galahad Primary setup
 # begin properties
 properties() { '
-kernel.string=ArKernel for Fortuna - Project ShadowX Core
+kernel.string=ArKernel for GrandMax - Project ShadowX Core
 do.devicecheck=1
 do.modules=1
 do.systemless=0

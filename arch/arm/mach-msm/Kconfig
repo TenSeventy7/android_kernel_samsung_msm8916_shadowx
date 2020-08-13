@@ -454,6 +454,20 @@ config MACH_A33G_EUR_OPEN
 	help
 	  Support for Samsung A33G EUR Open device.
 
+config SEC_GRANDMAX_PROJECT
+	depends on ARCH_MSM8916
+	default n
+	bool "Samsung GRANDMAX Project"
+	help
+	  Support for Samsung GRANDMAX Project
+
+config MACH_GRANDMAX_SWA_OPEN
+	depends on SEC_GRANDMAX_PROJECT
+	default n
+	bool "Samsung GRANDMAX SWA"
+	help
+	  Support for Samsung GRANDMAX SWA device.
+
 config SEC_A5_PROJECT
     depends on ARCH_MSM8916
         default n

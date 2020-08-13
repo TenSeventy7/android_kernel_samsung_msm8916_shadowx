@@ -12,7 +12,7 @@
 #ifndef __MSMB_ISP__
 #define __MSMB_ISP__
 
-#include "../../include/linux/videodev2.h>
+#include <linux/videodev2.h>
 
 #define MAX_PLANES_PER_STREAM 3
 #define MAX_NUM_STREAM 7

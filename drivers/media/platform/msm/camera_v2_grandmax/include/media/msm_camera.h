@@ -13,7 +13,7 @@
 #ifndef __LINUX_MSM_CAMERA_H
 #define __LINUX_MSM_CAMERA_H
 
-#include "../../include/linux/cdev.h>
-#include "../../include/uapi/media/msm_camera.h>
+#include <linux/cdev.h>
+#include <uapi/media/msm_camera.h>
 
 #endif /* __LINUX_MSM_CAMERA_H */

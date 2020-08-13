@@ -14,18 +14,18 @@
 #define __UAPI_MSM_CAMERA_H
 
 #ifdef MSM_CAMERA_BIONIC
-#include "../../include/sys/types.h>
+#include <sys/types.h>
 #endif
-#include "../../include/linux/videodev2.h>
-#include "../../include/linux/types.h>
-#include "../../include/linux/ioctl.h>
+#include <linux/videodev2.h>
+#include <linux/types.h>
+#include <linux/ioctl.h>
 #ifdef MSM_CAMERA_GCC
-#include "../../include/time.h>
+#include <time.h>
 #else
-#include "../../include/linux/time.h>
+#include <linux/time.h>
 #endif
 
-#include "../../include/linux/msm_ion.h>
+#include <linux/msm_ion.h>
 
 #define BIT(nr)   (1UL << (nr))
 

@@ -1,9 +1,9 @@
 #ifndef __LINUX_MSMB_CAMERA_H
 #define __LINUX_MSMB_CAMERA_H
 
-#include "../../include/linux/videodev2.h>
-#include "../../include/linux/types.h>
-#include "../../include/linux/ioctl.h>
+#include <linux/videodev2.h>
+#include <linux/types.h>
+#include <linux/ioctl.h>
 
 #define MSM_CAM_V4L2_IOCTL_NOTIFY \
 	_IOW('V', BASE_VIDIOC_PRIVATE + 30, struct msm_v4l2_event_data)

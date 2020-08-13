@@ -2,11 +2,11 @@
 #define __LINUX_MSM_CAM_SENSOR_H
 
 #ifdef MSM_CAMERA_BIONIC
-#include "../../include/sys/types.h>
+#include <sys/types.h>
 #endif
-#include "../../include/linux/types.h>
-#include "../../include/linux/v4l2-mediabus.h>
-#include "../../include/linux/i2c.h>
+#include <linux/types.h>
+#include <linux/v4l2-mediabus.h>
+#include <linux/i2c.h>
 
 #define I2C_SEQ_REG_SETTING_MAX   5
 #define I2C_SEQ_REG_DATA_MAX      256

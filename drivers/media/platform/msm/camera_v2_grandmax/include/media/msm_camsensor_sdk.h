@@ -1,7 +1,7 @@
 #ifndef __LINUX_MSM_CAMSENSOR_SDK_H
 #define __LINUX_MSM_CAMSENSOR_SDK_H
 
-#include "../../include/linux/v4l2-mediabus.h>
+#include <linux/v4l2-mediabus.h>
 
 #define KVERSION 0x1
 

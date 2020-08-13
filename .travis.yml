@@ -39,10 +39,7 @@ install:
 
 env:
     jobs:
-      - DEVICE="fortunave3g"
-      - DEVICE="fortuna3g"
-      - DEVICE="fortunaltedx"
-      - DEVICE="fortuna3gdtv"
+      - DEVICE="grandmax3g"
 
 script:
   - export ARCH=arm

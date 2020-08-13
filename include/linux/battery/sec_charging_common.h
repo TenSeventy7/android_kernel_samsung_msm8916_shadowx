@@ -59,10 +59,6 @@ enum sec_battery_capacity_mode {
 	SEC_BATTEY_CAPACITY_TEMPERARY,
 	/* current capacity now */
 	SEC_BATTEY_CAPACITY_CURRENT,
-	/* cell aging information */
-	SEC_BATTERY_CAPACITY_AGEDCELL,
-	/* charge count */
-	SEC_BATTERY_CAPACITY_CYCLE,
 };
 
 /* ADC type */
@@ -155,17 +151,6 @@ enum sec_battery_full_charged {
 	/* charger power supply property, NO additional full condition */
 	SEC_BATTERY_FULLCHARGED_CHGPSY,
 };
-
-/* Self discharger type */
-enum sec_battery_discharger_type {
-	/* type ADC */
-	SEC_BAT_SELF_DISCHARGING_BY_ADC = 0,
-	/* type Fuel Gauge */
-	SEC_BAT_SELF_DISCHARGING_BY_FG,
-	/* type Charger */
-	SEC_BAT_SELF_DISCHARGING_BY_CHG,
-};
-
 #define sec_battery_full_charged_t \
 	enum sec_battery_full_charged
 
@@ -175,8 +160,8 @@ enum sec_battery_discharger_type {
   * full-charged by absolute-timer only in high voltage
   */
 #define SEC_BATTERY_FULL_CONDITION_NOTIMEFULL	1
-/* SEC_BATTERY_FULL_CONDITION_SLEEPINFULL
-  * change polling time as sleep polling time even in full-charged
+/* SEC_BATTERY_FULL_CONDITION_NOSLEEPINFULL
+  * do not set polling time as sleep polling time in full-charged
   */
 #define SEC_BATTERY_FULL_CONDITION_NOSLEEPINFULL	2
 /* SEC_BATTERY_FULL_CONDITION_SOC
@@ -389,19 +374,6 @@ struct sec_charging_current {
 #define sec_charging_current_t \
 	struct sec_charging_current
 
-#if defined(CONFIG_BATTERY_AGE_FORECAST)
-struct sec_age_data {
-	int cycle;
-	unsigned int float_voltage;
-	unsigned int recharge_condition_vcell;
-	unsigned int full_condition_vcell;
-	unsigned int full_condition_soc;
-};
-
-#define sec_age_data_t \
-	struct sec_age_data
-#endif
-
 struct sec_battery_platform_data {
 	/* NO NEED TO BE CHANGED */
 	/* callback functions */
@@ -468,30 +440,21 @@ struct sec_battery_platform_data {
 	bool use_LED;				/* use charging LED */
 
 	bool event_check;
+	unsigned int chg_high_temp;
+
+
 	/* flag for skipping the swelling mode */
 	bool swelling_mode_skip_in_high_temp;
+
 	/* sustaining event after deactivated (second) */
 	unsigned int event_waiting_time;
 
 	/* battery swelling */
-	int swelling_high_temp_block;
-	int swelling_high_temp_recov;
-	int swelling_low_temp_block_1st;
-	int swelling_low_temp_recov_1st;
-	int swelling_low_temp_block_2nd;
-	int swelling_low_temp_recov_2nd;
-	unsigned int swelling_low_temp_current;
-	unsigned int swelling_low_temp_topoff;
-	unsigned int swelling_high_temp_current;
-	unsigned int swelling_high_temp_topoff;
-	unsigned int swelling_wc_high_temp_current;
-	unsigned int swelling_wc_low_temp_current;
-
+	int swelling_chg_current;
 	unsigned int swelling_normal_float_voltage;
 	unsigned int swelling_drop_float_voltage;
 	unsigned int swelling_high_rechg_voltage;
 	unsigned int swelling_low_rechg_voltage;
-	unsigned int swelling_drop_voltage_condition;
 
 	/* self discharging */
 	bool self_discharging_en;
@@ -502,7 +465,6 @@ struct sec_battery_platform_data {
 	int force_discharging_limit;
 	int force_discharging_recov;
 	int factory_discharging;
-	unsigned int self_discharging_type;
 
 	/* Monitor setting */
 	sec_battery_monitor_polling_t polling_type;
@@ -578,8 +540,6 @@ struct sec_battery_platform_data {
 	int chg_high_temp_recovery;
 	int chg_charging_limit_current;
 	int chg_charging_limit_current_2nd;
-	unsigned int chg_skip_check_time;
-	unsigned int chg_skip_check_capacity;
 	int wpc_high_temp;
 	int wpc_high_temp_recovery;
 	int wpc_charging_limit_current;
@@ -628,7 +588,6 @@ struct sec_battery_platform_data {
 	 */
 	int capacity_max;
 	int capacity_max_hv;
-
 	int capacity_max_margin;
 	int capacity_min;
 	int rcomp0;
@@ -649,31 +608,14 @@ struct sec_battery_platform_data {
 	int chg_polarity_status;
 	int chg_irq;
 	unsigned long chg_irq_attr;
-#ifdef CONFIG_OF
-	unsigned int chg_float_voltage;
-#else
+	/* float voltage (mV) */
 	int chg_float_voltage;
-#endif
-	unsigned int chg_float_voltage_conv;
 	sec_charger_functions_t chg_functions_setting;
+	int siop_level;
+	bool siop_activated;
 
-#if defined(CONFIG_SW_SELF_DISCHARGING)
-	int self_discharging_temp_block;
-	int self_discharging_volt_block;
-	int self_discharging_temp_recov;
-	int self_discharging_temp_pollingtime;
-#endif
-#if defined(CONFIG_BATTERY_AGE_FORECAST)
-	int num_age_step;
-	int age_step;
-	int age_data_length;
-	sec_age_data_t* age_data;
-#endif
 	/* ADC setting */
 	unsigned int adc_check_count;
-	unsigned int expired_time;
-	unsigned int recharging_expired_time;
-	int standard_curr;
 	/* ADC type for each channel */
 	unsigned int adc_type[];
 };
@@ -684,9 +626,6 @@ struct sec_charger_platform_data {
 	/* charging current for type (0: not use) */
 	sec_charging_current_t *charging_current;
 
-	/* wirelss charger */
-	char *wireless_charger_name;
-
 	int vbus_ctrl_gpio;
 	int chg_gpio_en;
 	/* 1 : active high, 0 : active low */
@@ -695,26 +634,7 @@ struct sec_charger_platform_data {
 	int chg_float_voltage;
 
 	int chg_irq;
-	int wpc_det;
 	unsigned long chg_irq_attr;
-	int wireless_cc_cv;
-
-	int siop_call_cc_current;
-	int siop_call_cv_current;
-
-	int wpc_charging_limit_current;
-	int sleep_mode_limit_current;
-
-	int siop_input_limit_current;
-	int siop_charging_limit_current;
-	int siop_hv_input_limit_current;
-	int siop_hv_charging_limit_current;
-	int siop_wireless_input_limit_current;
-	int siop_wireless_charging_limit_current;
-	int siop_hv_wireless_input_limit_current;
-	int siop_hv_wireless_charging_limit_current;
-
-	bool support_slow_charging;
 
 	/* OVP/UVLO check */
 	sec_battery_ovp_uvlo_t ovp_uvlo_check_type;
@@ -759,9 +679,6 @@ struct sec_fuelgauge_platform_data {
 	int capacity_min;
 	int rcomp0;
 	int rcomp_charging;
-#if defined(CONFIG_BATTERY_AGE_FORECAST)
-	unsigned int full_condition_soc;
-#endif
 };
 
 #define sec_battery_platform_data_t \

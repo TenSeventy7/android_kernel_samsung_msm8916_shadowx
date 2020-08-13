@@ -41,25 +41,6 @@ struct sec_battery_extcon_cable{
 };
 #endif /* CONFIG_EXTCON */
 
-#if defined(CONFIG_MUIC_NOTIFIER)
-#include <linux/muic/muic.h>
-#include <linux/muic/muic_notifier.h>
-#endif /* CONFIG_MUIC_NOTIFIER */
-#if defined(CONFIG_VBUS_NOTIFIER)
-#include <linux/vbus_notifier.h>
-#endif
-
-#define ADC_CH_COUNT		10
-#define ADC_SAMPLE_COUNT	10
-
-#define DEFAULT_HEALTH_CHECK_COUNT	5
-#define TEMP_HIGHLIMIT_DEFAULT	2000
-
-#define SEC_BAT_CURRENT_EVENT_NONE			0x0000
-#define SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING		0x0010
-#define SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING	0x0020
-#define SEC_BAT_CURRENT_EVENT_LOW_TEMP			0x0080
-
 #if defined(CONFIG_CHARGING_VZWCONCEPT)
 #define STORE_MODE_CHARGING_MAX 35
 #define STORE_MODE_CHARGING_MIN 30
@@ -67,6 +48,12 @@ struct sec_battery_extcon_cable{
 #define STORE_MODE_CHARGING_MAX 70
 #define STORE_MODE_CHARGING_MIN 60
 #endif
+
+#define ADC_CH_COUNT		10
+#define ADC_SAMPLE_COUNT	10
+
+#define DEFAULT_HEALTH_CHECK_COUNT	5
+#define TEMP_HIGHLIMIT_DEFAULT	2000
 
 struct adc_sample_info {
 	unsigned int cnt;
@@ -87,18 +74,9 @@ struct sec_battery_info {
 	struct power_supply psy_ps;
 	unsigned int irq;
 
-#if defined(CONFIG_MUIC_NOTIFIER)
-	struct notifier_block batt_nb;
-#endif
-#if defined(CONFIG_VBUS_NOTIFIER)
-	struct notifier_block vbus_nb;
-#endif
-
 #if defined(CONFIG_EXTCON)
 	struct sec_battery_extcon_cable extcon_cable_list[EXTCON_NONE];
 #endif /* CONFIG_EXTCON */
-	bool safety_timer_set;
-	bool lcd_status;
 
 	int status;
 	int health;
@@ -113,7 +91,6 @@ struct sec_battery_info {
 	int current_adc;
 
 	unsigned int capacity;			/* SOC (%) */
-	unsigned int input_voltage;		/* CHGIN/WCIN input voltage (V) */
 
 	struct mutex adclock;
 	struct adc_sample_info	adc_sample[ADC_CH_COUNT];
@@ -122,7 +99,7 @@ struct sec_battery_info {
 	struct wake_lock monitor_wake_lock;
 	struct workqueue_struct *monitor_wqueue;
 	struct delayed_work monitor_work;
-#ifdef CONFIG_SAMSUNG_BATTERY_FACTORY
+#if defined(CONFIG_SAMSUNG_BATTERY_FACTORY) || defined(CONFIG_ARCH_MSM8939)
 	struct wake_lock lpm_wake_lock;
 #endif
 	unsigned int polling_count;
@@ -150,9 +127,9 @@ struct sec_battery_info {
 
 	/* health change check*/
 	bool health_change;
+
 	/* ovp-uvlo health check */
 	unsigned int health_check_count;
-
 	/* time check */
 	unsigned long charging_start_time;
 	unsigned long charging_passed_time;
@@ -187,12 +164,7 @@ struct sec_battery_info {
 	/* charging */
 	unsigned int charging_mode;
 	bool is_recharging;
-	bool is_jig_on;
 	int cable_type;
-	int muic_cable_type;
-#if defined(CONFIG_VBUS_NOTIFIER)
-	int muic_vbus_status;
-#endif
 	struct wake_lock cable_wake_lock;
 	struct delayed_work cable_work;
 	struct wake_lock vbus_wake_lock;
@@ -200,10 +172,6 @@ struct sec_battery_info {
 	unsigned int recharge_check_cnt;
 	struct wake_lock vbus_detect_wake_lock;
 	struct delayed_work vbus_detect_work;
-
-	int input_current;
-	int charging_current;
-	int topoff_current;
 
 	/* wireless charging enable */
 	int wc_enable;
@@ -220,8 +188,15 @@ struct sec_battery_info {
 	int test_mode;
 	bool factory_mode;
 	bool store_mode;
-	bool ignore_store_mode;
 	bool slate_mode;
+
+#if defined(CONFIG_ABNORMAL_CHARGE_CHECK)
+	/* for Abnormal Charging Check */
+	int is_shipmode;
+	int not_charging_count;
+	int prev_soc;
+	int is_abnormal_logging;
+#endif
 
 	/* MTBF test for CMCC */
 	bool is_hc_usb;
@@ -229,10 +204,19 @@ struct sec_battery_info {
 	int siop_level;
 	int stability_test;
 	int eng_not_full_status;
-	bool skip_chg_temp_check;
+
 	bool charging_block;
 #if defined(CONFIG_BATTERY_SWELLING)
+	int swelling_temp_high_threshold;
+	int swelling_temp_high_recovery;
+	int swelling_temp_low_threshold;
+	int swelling_temp_low_recovery;
+	int swelling_recharge_voltage;
+	int swelling_block_time;
+
 	bool swelling_mode;
+	unsigned long swelling_block_start;
+	unsigned long swelling_block_passed;
 	int swelling_full_check_cnt;
 #endif
 #if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
@@ -242,40 +226,7 @@ struct sec_battery_info {
 	int discharging_ntc_adc;
 	int self_discharging_adc;
 #endif
-#if defined(CONFIG_AFC_CHARGER_MODE)
-	char *hv_chg_name;
-#endif
-
-#if defined(CONFIG_MACH_KOR_EARJACK_WR)
-	int earjack_wr_enable;
-	int earjack_wr_state;
-	int earjack_wr_soc_1st;
-	int earjack_wr_soc_2nd;
-	int earjack_wr_input_current_1st;
-	int earjack_wr_input_current_2nd;
-#endif
-#if defined(CONFIG_SW_SELF_DISCHARGING)
-	bool sw_self_discharging;
-	struct wake_lock self_discharging_wake_lock;
-#endif
-	bool stop_timer;
-	unsigned long prev_safety_time;
-	unsigned long expired_time;
-	unsigned long cal_safety_time;
-
-	struct mutex current_eventlock;
-	unsigned int current_event;
-#if defined(CONFIG_BATTERY_AGE_FORECAST)
-	int batt_cycle;
-#endif
 };
-
-#if defined(CONFIG_MACH_KOR_EARJACK_WR)
-#define EARJACK_WR_NONE			(0)
-#define EARJACK_WR_EARJACK		(0x01 << 0)
-#define EARJACK_WR_LCD			(0x01 << 1)
-#define EARJACK_WR_SOUNDPATH	(0x01 << 2)
-#endif
 
 ssize_t sec_bat_show_attrs(struct device *dev,
 				struct device_attribute *attr, char *buf);
@@ -338,7 +289,6 @@ enum {
 	FG_REG_DUMP,
 	FG_RESET_CAP,
 	FG_CAPACITY,
-	FG_ASOC,
 	AUTH,
 	CHG_CURRENT_ADC,
 	WC_ADC,
@@ -382,24 +332,7 @@ enum {
 	BATT_DISCHARGING_NTC,
 	BATT_DISCHARGING_NTC_ADC,
 	BATT_SELF_DISCHARGING_CONTROL,
-#if defined(CONFIG_SW_SELF_DISCHARGING)
-	BATT_SW_SELF_DISCHARGING,
-#endif
-	SAFETY_TIMER_SET,
-	HMT_TA_CONNECTED,
-	HMT_TA_CHARGE,
-#if defined(CONFIG_BATTERY_AGE_FORECAST)
-	FG_CYCLE,
-	FG_FULL_VOLTAGE,
-	FG_FULLCAPNOM,
-	BATTERY_CYCLE,
-#if defined(CONFIG_BATTERY_AGE_FORECAST_DETACHABLE)
-	BATT_AFTER_MANUFACTURED,
-#endif
-#endif
 };
-
-void charger_control_init(struct sec_battery_info *info);
 
 #ifdef CONFIG_OF
 extern int adc_read(struct sec_battery_info *battery, int channel);

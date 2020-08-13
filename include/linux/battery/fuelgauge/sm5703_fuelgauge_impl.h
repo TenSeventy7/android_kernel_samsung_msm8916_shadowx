@@ -63,23 +63,22 @@
 #define SM5703_REG_CURRENT_ERR      0x86
 #define SM5703_REG_Q_EST            0x87
 
+#define SM5703_REG_MISC     		0x90
+
+#define SM5703_FG_PARAM_UNLOCK_CODE	0x3700
+#define SM5703_FG_PARAM_LOCK_CODE	0x0000
+#define SM5703_FG_TABLE_LEN			0xF//real table length -1
+
 //start reg addr for table
-#define SM5703_REG_TABLE_START      0xA0
+#define SM5703_REG_TABLE_START		0xA0
 
 #define SM5703_REG_IOCV_B_L_MIN		0x30
 #define SM5703_REG_IOCV_B_L_MAX		0x37
 #define SM5703_REG_IOCV_B_S_MIN		0x40
 #define SM5703_REG_IOCV_B_S_MAX		0x43
 
-#define SM5703_REG_MISC			0x90
-
-#define SM5703_FG_PARAM_UNLOCK_CODE     0x3700
-#define SM5703_FG_PARAM_LOCK_CODE     0x0000
-#define SM5703_FG_TABLE_LEN    0xF//real table length -1
-
-
-#define SW_RESET_CODE		0x0008
-#define RS_MAN_CNTL             0x0800
+#define SW_RESET_CODE			0x0008
+#define RS_MAN_CNTL				0x0800
 
 // control register value
 #define ENABLE_MIX_MODE         0x8000
@@ -96,8 +95,6 @@
 #define CNTL_REG_DEFAULT_VALUE  0x2008
 #define INIT_CHECK_MASK         0x00FF
 #define DISABLE_RE_INIT         0x0007
-
-#define SM5703_BATTERY_VERSION    0x00E0
 
 #define TOPOFF_SOC_100   0x111
 #define TOPOFF_SOC_99    0x110

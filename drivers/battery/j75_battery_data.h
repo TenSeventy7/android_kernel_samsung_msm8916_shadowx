@@ -3,33 +3,29 @@
 #define CAPACITY_MIN			0
 
 static sec_bat_adc_table_data_t temp_table[] = {
-  {25995, 900},
-  {26226, 850},
-  {26480, 800},
-  {26815, 750},
-  {27213, 700},
-  {27607, 650},
-  {28071, 600},
-  {28292, 580},
-  {28614, 550},
-  {28864, 530},
-  {29190, 500},
-  {30015, 450},
-  {30834, 400},
-  {31718, 350},
-  {32701, 300},
-  {33707, 250},
-  {34764, 200},
-  {35863, 150},
-  {36830, 100},
-  {37932, 50},
-  {38477, 30},
-  {38880, 0},
-  {39426, -30},
-  {39704, -50},
-  {40393, -100},
-  {40985, -150},
-  {41512, -200},
+  {25950, 900},
+  {26173, 850},
+  {26450, 800},
+  {26720, 750},
+  {27103, 700},
+  {27569, 650},
+  {28152, 600},
+  {28623, 550},
+  {29235, 500},
+  {29968, 450},
+  {30817, 400},
+  {31748, 350},
+  {32732, 300},
+  {33807, 250},
+  {34888, 200},
+  {35980, 150},
+  {37043, 100},
+  {37980, 50},
+  {38910, 0},
+  {39680, -50},
+  {40400, -100},
+  {41067, -150},
+  {41479, -200},
 };
 
 
@@ -40,7 +36,6 @@ static sec_bat_adc_table_data_t temp_table[] = {
 #define TEMP_HIGHLIMIT_THRESHOLD_LPM		800
 #define TEMP_HIGHLIMIT_RECOVERY_LPM		750
 
-#if defined(CONFIG_MACH_O7_CHN_OPEN)
 #define TEMP_HIGH_THRESHOLD_EVENT  580
 #define TEMP_HIGH_RECOVERY_EVENT   530
 #define TEMP_LOW_THRESHOLD_EVENT   (-50)
@@ -53,20 +48,6 @@ static sec_bat_adc_table_data_t temp_table[] = {
 #define TEMP_HIGH_RECOVERY_LPM     530
 #define TEMP_LOW_THRESHOLD_LPM     (-50)
 #define TEMP_LOW_RECOVERY_LPM      0
-#else
-#define TEMP_HIGH_THRESHOLD_EVENT  580
-#define TEMP_HIGH_RECOVERY_EVENT   530
-#define TEMP_LOW_THRESHOLD_EVENT   (-50)
-#define TEMP_LOW_RECOVERY_EVENT    0
-#define TEMP_HIGH_THRESHOLD_NORMAL 580
-#define TEMP_HIGH_RECOVERY_NORMAL  530
-#define TEMP_LOW_THRESHOLD_NORMAL  (-50)
-#define TEMP_LOW_RECOVERY_NORMAL   0
-#define TEMP_HIGH_THRESHOLD_LPM    580
-#define TEMP_HIGH_RECOVERY_LPM     530
-#define TEMP_LOW_THRESHOLD_LPM     (-50)
-#define TEMP_LOW_RECOVERY_LPM      0
-#endif
 
 #if defined(CONFIG_BATTERY_SWELLING)
 #define BATT_SWELLING_HIGH_TEMP_BLOCK		500

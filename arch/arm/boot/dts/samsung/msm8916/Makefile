@@ -360,6 +360,10 @@ ifeq ($(CONFIG_SEC_FORTUNA_PROJECT),y)
 
 endif
 
+ifeq ($(CONFIG_SEC_GRANDMAX_PROJECT),y)
+	dtb-y += msm8916-sec-grandmax-r04.dtb
+endif
+
 ifeq ($(CONFIG_SEC_ROSSA_PROJECT),y)
 	ifeq ($(CONFIG_MACH_ROSSA_TMO),y)
 		dtb-y += msm8916-sec-rossatmo-r00.dtb

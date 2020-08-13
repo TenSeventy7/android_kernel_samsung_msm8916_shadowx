@@ -6,19 +6,32 @@ dist: bionic
 branches:
   only:
   - fortuna-staging
+  - fortuna-stable
   except:
-  - /^ci_build/
+  - /^ci_staging/
+  - /^ci_stable/
 
-before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-  - sudo apt-get install -y build-essential kernel-package bzip2 ccache libc6-dev-i386 lib32stdc++6
+addons:
+  apt:
+    sources:
+    - sourceline: 'ppa:ubuntu-toolchain-r/test'
+    packages:
+    - g++-7
+    - build-essential
+    - kernel-package
+    - bzip2
+    - ccache
+    - lib32stdc++6
+    - libc6-dev-i386
 
 install:
-  - sudo apt-get install -qq g++-7 
   - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
+
+  # Fix kernel building
   - sudo ./ci-fix.sh
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libmpfr.so.6 /usr/lib/x86_64-linux-gnu/libmpfr.so.4
+
+  # Install toolchain
   - git clone https://bitbucket.org/UBERTC/arm-eabi-4.8.git $HOME/arm-eabi-4.8-ubertc
   - export PATH="$HOME/arm-eabi-4.8-ubertc/bin/:$PATH"
   - export CROSS_COMPILE=$HOME/arm-eabi-4.8-ubertc/bin/arm-eabi-
@@ -44,13 +57,8 @@ before_deploy:
   - git config --local user.name "John Vincent"
   - git config --local user.email "28522823+TenSeventy7@users.noreply.github.com"
 
-  # Remove exisitng tags so we keep latest
-  - git remote set-url origin https://TenSeventy7:$ENCK@github.com/TenSeventy7/android_kernel_samsung_msm8916_shadowx.git
-  - git tag | grep ci_build-$DEVICE | xargs -n 1 -I% git push origin :refs/tags/%
-
-  - export TRAVIS_TAG=ci_build-$DEVICE-$(date +'%Y%m%d%H%M%S')
-  - export CI_MESSAGE=`echo -e "Last 5 changes\n\n$(git log --format=%h -5)"`
-  - git tag $TRAVIS_TAG -m "$CI_MESSAGE"
+  - export TRAVIS_TAG=ci_staging-$TRAVIS_BUILD_NUMBER
+  - git tag $TRAVIS_TAG
 
 deploy:
   provider: releases

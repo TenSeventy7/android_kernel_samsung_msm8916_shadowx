@@ -1048,6 +1048,14 @@ config MFD_LM3632
 	help
 	  Say yes here to enable support for TI LM3632 BL IC.
 
+config MFD_ISL98611
+	tristate "ISL98611 Lighting BL IC"
+	depends on I2C
+	select MFD_CORE
+	select REGMAP_I2C
+	help
+	  Say yes here to enable support for Intersil ISL98611 BL IC.
+
 config MFD_TIMBERDALE
 	tristate "Timberdale FPGA"
 	select MFD_CORE
